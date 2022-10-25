@@ -49,7 +49,7 @@ class Garant(models.Model):
   class Meta:
     constraints = [
       models.UniqueConstraint(
-        fields=['UserUID', 'CourseUID'], name='unique user course ID'
+        fields=['UserUID', 'CourseUID'], name='unique garant course ID'
       )
     ]
 
@@ -61,7 +61,7 @@ class Teacher(models.Model):
   class Meta:
     constraints = [
       models.UniqueConstraint(
-        fields=['UserUID', 'CourseUID'], name='unique user course ID'
+        fields=['UserUID', 'CourseUID'], name='unique teacher course ID'
       )
     ]
 
@@ -73,7 +73,7 @@ class Student(models.Model):
   class Meta:
     constraints = [
       models.UniqueConstraint(
-        fields=['UserUID', 'CourseUID'], name='unique user course ID'
+        fields=['UserUID', 'CourseUID'], name='unique student course ID'
       )
     ]
 
@@ -122,6 +122,6 @@ class Termin2Body(models.Model):
   class Meta:
     constraints = [
       models.UniqueConstraint(
-        fields=['UserUID', 'StudentUID', 'TeacherUID'], name='unique termin,student,teacher UID'
+        fields=['TerminUID', 'StudentUID', 'TeacherUID'], name='unique termin,student,teacher UID'
       )
     ]
