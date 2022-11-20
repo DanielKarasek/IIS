@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WIS2 User registration</title>
+</head>
+<body>
+<form method="post">
+        {% csrf_token %}
+        {{ form }}
+      <button type="submit" class="button-login">Sign up</button>
+    </form>
+</body>
+</html>

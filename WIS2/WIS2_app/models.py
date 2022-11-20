@@ -38,6 +38,7 @@ class User(models.Model):
   UID = models.CharField(max_length=8, primary_key=True)
   password = models.CharField(max_length=100)
 
+
 ### Vztazne pro typy userov
 # Udelat jen foreign key v course + confirmed
 class Garant(models.Model):
@@ -110,6 +111,7 @@ class TerminSingle(models.Model):
   TerminID = models.ForeignKey(Termin, on_delete=models.CASCADE, primary_key=True)
 
   date = models.DateTimeField()
+
 
 ### Vztazna na BODY
 class Termin2Body(models.Model):
