@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course
+from .models import *
 from .validators import validate_is_positive, validate_alphanumeric_strings
 
 COURSE_KINDS = [
@@ -37,3 +37,12 @@ class CreateCourseForm(forms.Form):
         course.language = self.cleaned_data['lang']
         course.description = self.cleaned_data['desc']
         course.save()
+
+
+class CreateRoomForm(forms.Form):
+    uid = forms.CharField(label="Room number", max_length=10, required=True)
+
+    def save(self):
+        room = Room()
+        room.roomUID = self.cleaned_data['uid']
+        room.save()

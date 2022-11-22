@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% extends 'WIS2_app/base.html' %}
+{% comment %}
+remove comment after testing
+{% #if user.is_staff %}
+{% endcomment %}
+{% block content %}
+    <table>
+        <tr>
+            <td>
+                <form>
+                    {% csrf_token %}
+                    {{ form }}
+                    <button type="submit">Add new room</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <th>Room number</th>
+            <th>Delete room</th>
+        </tr>
+        {%  for room in rooms %}
+        <tr>
+            <td> {{ room.roomUID }}</td>
+            <td> <a href="delete/{{ room.roomUID }}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+{% comment %}
+{% else %}
+    <meta http-equiv="Refresh" content="0; url=''"/>
+{% endif %}
+{% endcomment %}
