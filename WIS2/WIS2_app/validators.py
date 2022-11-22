@@ -10,3 +10,7 @@ def validate_alphanumeric_strings(value: str,
   if not str.isalnum(value):
     raise ValidationError(f"{value} isn't alphanumeric string")
 
+
+def validate_is_positive(value):
+  if value <= 0:
+    raise ValidationError(f"{value} is not a positive number")

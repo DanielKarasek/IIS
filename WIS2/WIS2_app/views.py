@@ -14,16 +14,20 @@ def user(request: HttpRequest):
 
 
 def courses(request: HttpRequest):
-  if request.method == "POST":
+  if request.method == 'POST':
     form = CreateCourseForm(request.POST)
     if form.is_valid():
-      n = form.cleaned_data["name"]
-      uid = form.cleaned_data["UID"]
-      Course(UID=uid, name=n).save()
+      form.save()
+  else:
+    form = CreateCourseForm()
+
+  return render(request, "WIS2_app/courses.html", {'form': form})
+
+def new_course(request: HttpRequest):
+  if request.method == 'POST':
+    pass
   else:
     pass
-  return render(request, "WIS2_app/courses.html", {'course_list': Course.objects.all(),
-                                                    'form': CreateCourseForm})
 
 
 def index2(request, name):

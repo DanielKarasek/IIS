@@ -2,31 +2,21 @@
 
 {% block content %}
     <h1>List of courses</h1>
-    <ul>
+    <ul><!--
         {% for item in course_list%}
             <li>{{item.name}}</li>
         {% endfor %}
+    -->
     </ul>
     <br>
     <div>
     ruzne formaty jak muze form byt poskladany
     </div>
     <br>
-    <form method="post" action="/courses">
+    <form method="post">
         {%  csrf_token %}
-        {{ form.as_ul }}
+        {{ form }}
         <button name="sumbit">submit</button>
     </form>
-    <br>
-    <form method="post" action="/courses">
-        {%  csrf_token %}
-        {{ form.as_table }}
-        <button name="sumbit">submit</button>
-    </form>
-    <br>
-    <form method="post" action="/courses">
-        {%  csrf_token %}
-        {{ form.as_p }}
-        <button name="sumbit">submit</button>
-    </form>
+
 {% endblock %}
