@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("WIS2_app.urls")),
     path('register/', login_views.register, name='register'),
-    #path('', include('django.contrib.auth.urls'))
+    path('', include('django.contrib.auth.urls'))
 ]
