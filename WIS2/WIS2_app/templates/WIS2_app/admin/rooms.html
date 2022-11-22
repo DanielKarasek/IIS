@@ -8,7 +8,7 @@ remove comment after testing
     <table>
         <tr>
             <td>
-                <form>
+                <form method="post">
                     {% csrf_token %}
                     {{ form }}
                     <button type="submit">Add new room</button>
@@ -22,7 +22,7 @@ remove comment after testing
         {%  for room in rooms %}
         <tr>
             <td> {{ room.roomUID }}</td>
-            <td> <a href="delete/{{ room.roomUID }}">Delete</a></td>
+            <td> <a href="delete/{{ room.roomUID }}/">Delete</a></td>
         </tr>
         {% endfor %}
     </table>

@@ -43,6 +43,7 @@ class CreateRoomForm(forms.Form):
     uid = forms.CharField(label="Room number", max_length=10, required=True)
 
     def save(self):
+        print("got here")
         room = Room()
         room.roomUID = self.cleaned_data['uid']
         room.save()

@@ -13,7 +13,8 @@ def room(request: HttpRequest):
     else:
         form = CreateRoomForm()
     try:
-        rooms = Room.objects.get()
+        rooms = Room.objects.all()
+        print(rooms)
     except django.core.exceptions.ObjectDoesNotExist:
         rooms = []
     return render(request, "WIS2_app/admin/rooms.html", {"form": form,
