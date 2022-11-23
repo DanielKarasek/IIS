@@ -16,7 +16,7 @@ class Course(models.Model):
         FREE = ('FRE', 'Free')
 
     UID = models.CharField(max_length=5, primary_key=True)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=40)
 
     kind = models.CharField(max_length=3,
                             choices=Kinds.choices,
@@ -97,6 +97,8 @@ class Termin(models.Model):
     RoomUID = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
     max_points = models.PositiveIntegerField()
 
+    name = models.CharField(max_length=30)
+
     description = models.CharField(max_length=2000)
     kind = models.CharField(max_length=3, choices=Kinds.choices, default=Kinds.ONE_TIME)
 
@@ -104,6 +106,7 @@ class Termin(models.Model):
 # specializuju at nemusime mit ruzne vztazne pro period a single terminy
 class TerminPeriod(models.Model):
     TerminID = models.ForeignKey(Termin, on_delete=models.CASCADE, primary_key=True)
+
 
     start = models.DateTimeField()
     repeats = models.PositiveIntegerField()

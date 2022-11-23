@@ -1,19 +1,23 @@
 from django.http.request import HttpRequest
 from django.shortcuts import render
-from WIS2_app.models import Course
 from .forms import CreateCourseForm
 from .models import Course
+from django.http.response import HttpResponse
 
 
-def index(request: HttpRequest):
-    return render(request, "WIS2_app/index.html", {})
+def index(request: HttpRequest) -> HttpResponse:
+    return render(request, "WIS2_app/index.html", {'user': False, 'garant': False, 'lecturer': False})
 
 
-def user(request: HttpRequest):
-    return render(request, "WIS2_app/user.html", {})
+def user(request: HttpRequest) -> HttpResponse:
+    return render(request, "WIS2_app/user/user.html", {})
 
 
-def courses(request: HttpRequest):
+def courses(request: HttpRequest) -> HttpResponse:
+  return render(request, "WIS2_app/courses.html", {'course_list': Course.objects.all(), 'user': True})
+
+
+def create_course(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = CreateCourseForm(request.POST)
         if form.is_valid():
@@ -21,17 +25,11 @@ def courses(request: HttpRequest):
     else:
         form = CreateCourseForm()
 
-    return render(request, "WIS2_app/courses.html", {'form': form})
+    return render(request, "WIS2_app/user/create_course.html", {'form': form})
 
 
-def new_course(request: HttpRequest):
+def new_course(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         pass
     else:
         pass
-
-
-def index2(request, name):
-    course = Course.objects.get(name=name)
-    name = course.name
-    return Httprequest("<h1>%s</h1>" % name)

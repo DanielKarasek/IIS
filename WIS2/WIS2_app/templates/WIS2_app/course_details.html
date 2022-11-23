@@ -1,0 +1,89 @@
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <h1> Shrnuti kurzu</h1>>
+    <table>
+        <tr>
+            <td>Název</td><td>{{ course.name }}</td>
+            <td>Registrovaní</td><td>{{ registered }}/{{ course.student_limit }}</td>
+            <td>Jazyk</td><td>{{ course.language }}</td>
+            <td>Kredity</td>{{ course.credits }}<td></td>
+            <td>Druh</td><td>{{ course.kind }}</td>
+        </tr>
+    </table>
+    <h1>Popis</h1>>
+    <div>
+    {{ course.description }}
+    </div>
+    <h1>Terminy</h1>
+    <h2>testy</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for test in test_list %}
+            <tr>
+                <td>{{ test.name }}</td>
+                <td>{{ test.date }}</td>
+                <td>{{ test.roomUID }}</td>
+                <td>{{ test.max_points }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h2>Projekty</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Deadline</td>
+            <td>Body</td>
+        </tr>
+        {% for project in project_list %}
+            <tr>
+                <td>{{ project.name }}</td>
+                <td>{{ project.date }}</td>
+                <td>{{ project.max_points }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h2>Cvičení</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Perioda opakování</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for practice_lecture in practice_lecture_list %}
+              <tr>
+                  <td>{{ practice_lecture.name }}</td>
+                  <td>{{ practice_lecture.date }}</td>
+                  <td>{{ practice_lecture.peridocity }}</td>
+                  <td>{{ practice_lecture.roomUID }}</td>
+                  <td>{{ practice_lecture.max_points }}</td>
+              </tr>
+        {% endfor %}
+    </table>
+    <h2>Přednášky</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Perioda opakování</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for lecture in lecture_list %}
+              <tr>
+                  <td>{{ lecture.name }}</td>
+                  <td>{{ lecture.date }}</td>
+                  <td>{{ lecture.peridocity }}</td>
+                  <td>{{ lecture.roomUID }}</td>
+                  <td>{{ lecture.max_points }}</td>
+              </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

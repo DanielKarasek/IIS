@@ -11,18 +11,19 @@ COURSE_KINDS = [
 
 class CreateCourseForm(forms.Form):
     uid = forms.CharField(label="Short name", max_length=5, required=True)
-    name = forms.CharField(label="Name", max_length=20, required=True)
+    name = forms.CharField(label="Name", max_length=40, required=True)
 
     kind = forms.CharField(label="Course type:", required=True,
-                           widget=forms.Select(choices=COURSE_KINDS))
+                           widget=forms.Select(choices=Course.Kinds.choices))
 
     credit = forms.IntegerField(label="Credits", required=True,
-                                validators=[validate_is_positive])
+                                validators=[validate_is_positive], min_value=1, max_value=30)
 
     students = forms.IntegerField(label="Student limit", required=True,
-                                  validators=[validate_is_positive])
+                                  validators=[validate_is_positive], min_value=1, max_value=999)
 
-    lang = forms.CharField(label="Language", max_length=3, required=True)
+    lang = forms.CharField(label="Language", max_length=3, required=True, widget=forms.Select(choices=
+                                                                                              Course.Languages.choices))
 
     desc = forms.CharField(label="description", required=True,
                            widget=forms.Textarea)

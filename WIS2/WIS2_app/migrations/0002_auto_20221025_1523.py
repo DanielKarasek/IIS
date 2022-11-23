@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='User',
+            name='user',
             fields=[
                 ('UID', models.CharField(max_length=8, primary_key=True, serialize=False)),
                 ('password', models.CharField(max_length=100)),

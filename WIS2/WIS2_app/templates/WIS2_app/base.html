@@ -6,9 +6,27 @@
 </head>
 <body>
     <div class='topnav'>
-        <a href='/'>index</a>
-        <a href='/user/'>Uzivatel</a>
-        <a href='/courses/'>Kurzy</a>
+        {% block tabs%}
+            <!-- historie predmetu -->
+            {% if user %}
+                <a href='/user'>Uzivatel</a>
+            {% endif %}
+                <a href='/'>index</a>
+                <a href='/courses/'>Kurzy</a>
+            {% if user %}
+                <a href='/my_courses'>Moje Kurzy</a>
+            {% endif %}
+            {% if lecturer or  garant%}
+                <a href='/lecture_administration'>Sprava Lekci</a>
+            {% endif %}
+            {% if garant %}
+                <a href='/course_administration'>Sprava kurzu</a>
+            {% endif %}
+            {% if lecturer or  garant%}
+                <a href='/student_evaluation'>Hodnoceni studentu</a>
+            {% endif %}
+
+        {% endblock %}
     </div>
     <div>
         {% block content %}

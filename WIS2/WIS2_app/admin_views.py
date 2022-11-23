@@ -5,6 +5,7 @@ from .forms import CreateRoomForm
 import django.core.exceptions
 from .models import Course
 
+
 def room(request: HttpRequest):
     if request.method == 'POST':
         form = CreateRoomForm(request.POST)
@@ -19,6 +20,7 @@ def room(request: HttpRequest):
         rooms = []
     return render(request, "WIS2_app/admin/rooms.html", {"form": form,
                                                          "rooms": rooms})
+
 
 def room_delete(request: HttpRequest, room_uid):
     try:

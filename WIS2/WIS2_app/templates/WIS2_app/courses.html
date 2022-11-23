@@ -2,21 +2,28 @@
 
 {% block content %}
     <h1>List of courses</h1>
-    <ul><!--
-        {% for item in course_list%}
-            <li>{{item.name}}</li>
-        {% endfor %}
-    -->
-    </ul>
-    <br>
-    <div>
-    ruzne formaty jak muze form byt poskladany
-    </div>
-    <br>
-    <form method="post">
-        {%  csrf_token %}
-        {{ form }}
-        <button name="sumbit">submit</button>
-    </form>
+    <table>
+        <tr>
+            <th>Zkratka</th>
+            <th>Jméno</th>
+            <th>kredity</th>
+            <th>limit studentů</th>
+            <th>Jazyk</th>
+            <th>Typ</th>
+        </tr>
+            {% for item in course_list%}
+            <tr>
+                <th>{{item.UID}}</th>
+                <th>{{item.name}}</th>
+                <th>{{item.credits}}</th>
+                <th>{{item.student_limit}}</th>
+                <th>{{item.language}}</th>
+                <th>{{item.kind}}</th>
+                {% if user %}
+                <th><button name={{item.UID}} > reg </button></th>
+                {% endif %}
+            </tr>
+            {% endfor %}
+    </table>
 
 {% endblock %}
