@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.exceptions
 from django.db.models import Q
 from .forms import CreateCourseForm
-from .models import *
+from .models import Course, Student
 from django.http.response import HttpResponse
 
 
