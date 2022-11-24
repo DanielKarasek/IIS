@@ -86,7 +86,7 @@ class Termin(models.Model):
         PERIODIC = ('PER', 'Periodic')
         ONE_TIME = ('ONE', 'OneTime')
 
-    ID = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    ID = models.UUIDField(primary_key=True, default=uuid.uuid4, auto_created=True)
 
     CourseUID = models.ForeignKey(Course, on_delete=models.CASCADE)
 

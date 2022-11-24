@@ -103,15 +103,13 @@ def course_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
   if not len(course_query_res):
     return redirect("courses/")
 
-  period_terms = (Termin.objects.
-                  filter(CourseUID__exact=course_uid).
-                  select_related("CourseUID").
-                  select_related("terminperiod"))
-  single_terms = (Termin.objects.
-                  filter(CourseUID__exact=course_uid).
-                  select_related("CourseUID").
-                  select_related("terminsingle").
-                  filter(kind__exact='LEC'))
+  period_terms = (TerminPeriod.objects.
+                  select_related('TerminID').
+                  filter(TerminID__CourseUID__exact=course_uid))
+
+  single_terms = (TerminSingle.objects.
+                  select_related('TerminID').
+                  filter(TerminID__CourseUID__exact=course_uid))
 
   course = course_query_res[0]
 
@@ -119,7 +117,6 @@ def course_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
   project_list = single_terms.filter(kind__exact="PRJ").all()
   lecture_list = period_terms.filter(kind__exact="LEC").all()
   practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
-  print(exam_list)
   return render(request, "WIS2_app/course_details.html",
                 {'user': True,
                  'course': course,
