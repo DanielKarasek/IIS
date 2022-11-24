@@ -6,6 +6,7 @@ from django.db.models import Q
 from .forms import CreateCourseForm
 from .models import *
 from django.http.response import HttpResponse
+from .helper_functions import get_user_kind
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -117,6 +118,7 @@ def course_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
   project_list = single_terms.filter(kind__exact="PRJ").all()
   lecture_list = period_terms.filter(kind__exact="LEC").all()
   practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+  print(get_user_kind(request))
   return render(request, "WIS2_app/course_details.html",
                 {'user': True,
                  'course': course,
