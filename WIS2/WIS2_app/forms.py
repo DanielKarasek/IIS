@@ -8,6 +8,11 @@ COURSE_KINDS = [
     ('FRE', 'Free'),
 ]
 
+TERMIN_KINDS = [
+    ('PER', 'Periodic'),
+    ('ONE', 'OneTime'),
+]
+
 
 class CreateCourseForm(forms.Form):
     uid = forms.CharField(label="Short name", max_length=5, required=True)
@@ -25,7 +30,7 @@ class CreateCourseForm(forms.Form):
     lang = forms.CharField(label="Language", max_length=3, required=True, widget=forms.Select(choices=
                                                                                               Course.Languages.choices))
 
-    desc = forms.CharField(label="description", required=True,
+    desc = forms.CharField(label="Description", required=True,
                            widget=forms.Textarea)
 
     def save(self):
@@ -48,3 +53,23 @@ class CreateRoomForm(forms.Form):
         room = Room()
         room.roomUID = self.cleaned_data['uid']
         room.save()
+
+
+class CreateTerminForm(forms.Form):
+    courseID = ''
+
+    room = forms.CharField(label="Room number:", required=False)
+    points = forms.IntegerField(label="Maximum points:", required=True, min_value=0)
+    kind = forms.CharField(label="Periodic?: ", required=True,
+                           widget=forms.Select(choices=TERMIN_KINDS))
+    desc = forms.CharField(label="Description", required=False,
+                           widget=forms.Textarea)
+
+    def save(self):
+        termin = Termin()
+        termin.CourseUID = self.courseID
+        termin.RoomUID = self.cleaned_data['room']
+        termin.max_points = self.cleaned_data['points']
+        termin.kind = self.cleaned_data['kind']
+        termin.description = self.cleaned_data['desc']
+        termin.save()

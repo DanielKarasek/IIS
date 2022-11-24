@@ -25,7 +25,11 @@
             {% if lecturer or  garant%}
                 <a href='/student_evaluation'>Hodnoceni studentu</a>
             {% endif %}
-
+            {% if user %}
+                <a>Logout</a>
+            {% else %}
+                <a>Log In</a>
+            {% endif %}
         {% endblock %}
     </div>
     <div>

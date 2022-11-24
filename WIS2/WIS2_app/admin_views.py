@@ -17,7 +17,6 @@ def room(request: HttpRequest):
         form = CreateRoomForm()
     try:
         rooms = Room.objects.all()
-        print(rooms)
     except django.core.exceptions.ObjectDoesNotExist:
         rooms = []
     return render(request, "WIS2_app/admin/rooms.html", {"form": form,

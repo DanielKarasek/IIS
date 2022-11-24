@@ -3,14 +3,37 @@
 {% block content %}
     <h1>List of courses</h1>
     <table>
-        <tr>
-            <th>Zkratka</th>
-            <th>Jméno</th>
-            <th>kredity</th>
-            <th>limit studentů</th>
-            <th>Jazyk</th>
-            <th>Typ</th>
-        </tr>
+            {% if user %}
+                <tr><th>Moje predmety</th></tr>
+               <tr>
+                    <th>Zkratka</th>
+                    <th>Jméno</th>
+                    <th>kredity</th>
+                    <th>limit studentů</th>
+                    <th>Jazyk</th>
+                    <th>Typ</th>
+                </tr>
+                {% for item in registered_course_list %}
+                <tr>
+                    <th>{{item.UID}}</th>
+                    <th>{{item.name}}</th>
+                    <th>{{item.credits}}</th>
+                    <th>{{item.student_limit}}</th>
+                    <th>{{item.language}}</th>
+                    <th>{{item.kind}}</th>
+                    <th><button name={{item.UID}} > reg </button></th>
+                </tr>
+                    {% endfor %}
+            {% endif %}
+            <tr><th>Vsechny predmety</th></tr>
+            <tr>
+                <th>Zkratka</th>
+                <th>Jméno</th>
+                <th>kredity</th>
+                <th>limit studentů</th>
+                <th>Jazyk</th>
+                <th>Typ</th>
+            </tr>
             {% for item in course_list%}
             <tr>
                 <th>{{item.UID}}</th>
