@@ -26,11 +26,11 @@ def courses(request: HttpRequest) -> HttpResponse:
 
         #try to extract user courses
         try:
-            pass
+            registered_courses = Student.CourseUID.objects.all()
         except django.core.exceptions.ObjectDoesNotExist:
             pass
 
-
+    #get all existing courses
     _courses = []
     try:
         _courses = Course.objects.all()
@@ -44,8 +44,12 @@ def courses(request: HttpRequest) -> HttpResponse:
 @login_required
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
     #if the user is already in the course do nothing
-    _course = Course.objects.get(Q(UID=course_uid))
-    _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+    try:
+        _course = Course.objects.get(Q(UID=course_uid))
+        _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+    except django.core.exceptions.ObjectDoesNotExist:
+        return redirect('courses/')
+
     if _student:
         return redirect('courses/')
     else:
@@ -54,13 +58,25 @@ def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
         new_student.UserUID = request.user
         #confirmed status
         new_student.save()
+
+    #vytvorit asi aj body k terminom tuna?
+
     return redirect('courses/')
 
 
 @login_required
 def courses_leave(request: HttpRequest, course_uid) -> HttpResponse:
+    try:
+        _course = Course.objects.get(Q(UID=course_uid))
+        _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+    except django.core.exceptions.ObjectDoesNotExist:
+        return redirect('courses/')
+
+    if _student:
+        _student.delete()
 
     return redirect('courses/')
+
 
 @login_required
 def courses_create(request: HttpRequest) -> HttpResponse:
@@ -73,9 +89,3 @@ def courses_create(request: HttpRequest) -> HttpResponse:
 
     return render(request, "WIS2_app/user/create_course.html", {'form': form})
 
-
-def new_course(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        pass
-    else:
-        pass
