@@ -2,8 +2,9 @@ from django.http.request import HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions
+from django.db.models import Q
 from .forms import CreateCourseForm
-from .models import Course
+from .models import *
 from django.http.response import HttpResponse
 
 
@@ -18,20 +19,41 @@ def user(request: HttpRequest) -> HttpResponse:
 
 def courses(request: HttpRequest) -> HttpResponse:
     user_logged_in = False
+    registered_courses = []
     if request.user.is_authenticated:
+        #show registered course list and buttons
         user_logged_in = True
+
+        #try to extract user courses
+        try:
+            pass
+        except django.core.exceptions.ObjectDoesNotExist:
+            pass
+
 
     _courses = []
     try:
         _courses = Course.objects.all()
     except django.core.exceptions.ObjectDoesNotExist:
         pass
-    return render(request, "WIS2_app/courses.html", {'course_list': _courses, 'user': user_logged_in})
+    return render(request, "WIS2_app/courses.html", {'course_list': _courses,
+                                                     'registered_course_list': registered_courses,
+                                                     'user': user_logged_in})
 
 
 @login_required
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
-
+    #if the user is already in the course do nothing
+    _course = Course.objects.get(Q(UID=course_uid))
+    _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+    if _student:
+        return redirect('courses/')
+    else:
+        new_student = Student()
+        new_student.CourseUID = _course
+        new_student.UserUID = request.user
+        #confirmed status
+        new_student.save()
     return redirect('courses/')
 
 
