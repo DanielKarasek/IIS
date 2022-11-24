@@ -1,15 +1,14 @@
 {% extends 'WIS2_app/base.html' %}
 
 {% block content %}
-    <h1> Shrnuti kurzu</h1>>
+    <h1> Shrnuti kurzu</h1>
     <table>
-        <tr>
-            <td>Název</td><td>{{ course.name }}</td>
-            <td>Registrovaní</td><td>{{ registered }}/{{ course.student_limit }}</td>
-            <td>Jazyk</td><td>{{ course.language }}</td>
-            <td>Kredity</td>{{ course.credits }}<td></td>
-            <td>Druh</td><td>{{ course.kind }}</td>
-        </tr>
+        <tr><td>Název</td><td>{{ course.name }}</td></tr>
+        <tr><td>Registrovaní</td><td>{{ registered }}/{{ course.student_limit }}</td></tr>
+        <tr><td>Jazyk</td><td>{{ course.language }}</td></tr>
+        <tr><td>Kredity</td><td>{{ course.credits }}</td></tr>
+        <tr><td>Druh</td><td>{{ course.kind }}</td></tr>
+
     </table>
     <h1>Popis</h1>>
     <div>
@@ -24,12 +23,12 @@
             <td>Místnost</td>
             <td>Body</td>
         </tr>
-        {% for test in test_list %}
+        {% for exam in exam_list %}
             <tr>
-                <td>{{ test.name }}</td>
-                <td>{{ test.date }}</td>
-                <td>{{ test.roomUID }}</td>
-                <td>{{ test.max_points }}</td>
+                <td>{{ exam.name }}</td>
+                <td>{{ exam.TerminSingle.date }}</td>
+                <td>{{ exam.roomUID }}</td>
+                <td>{{ exam.max_points }}</td>
             </tr>
         {% endfor %}
     </table>
@@ -43,7 +42,7 @@
         {% for project in project_list %}
             <tr>
                 <td>{{ project.name }}</td>
-                <td>{{ project.date }}</td>
+                <td>{{ project.TerminSingle.date }}</td>
                 <td>{{ project.max_points }}</td>
             </tr>
         {% endfor %}
@@ -60,8 +59,8 @@
         {% for practice_lecture in practice_lecture_list %}
               <tr>
                   <td>{{ practice_lecture.name }}</td>
-                  <td>{{ practice_lecture.date }}</td>
-                  <td>{{ practice_lecture.peridocity }}</td>
+                  <td>{{ practice_lecture.TerminPeriod.date }}</td>
+                  <td>{{ practice_lecture.TerminPeriod.peridocity }}</td>
                   <td>{{ practice_lecture.roomUID }}</td>
                   <td>{{ practice_lecture.max_points }}</td>
               </tr>
@@ -79,8 +78,8 @@
         {% for lecture in lecture_list %}
               <tr>
                   <td>{{ lecture.name }}</td>
-                  <td>{{ lecture.date }}</td>
-                  <td>{{ lecture.peridocity }}</td>
+                  <td>{{ lecture.TerminPeriod.date }}</td>
+                  <td>{{ lecture.TerminPeriod.peridocity }}</td>
                   <td>{{ lecture.roomUID }}</td>
                   <td>{{ lecture.max_points }}</td>
               </tr>

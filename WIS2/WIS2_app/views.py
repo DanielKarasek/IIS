@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.exceptions
 from django.db.models import Q
 from .forms import CreateCourseForm
-from .models import Course, Student
+from .models import *
 from django.http.response import HttpResponse
 
 
@@ -89,3 +89,41 @@ def courses_create(request: HttpRequest) -> HttpResponse:
 
     return render(request, "WIS2_app/user/create_course.html", {'form': form})
 
+
+def new_course(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+
+
+def course_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
+  course_query_res = Course.objects.filter(UID__exact=course_uid).all()
+
+  if not len(course_query_res):
+    return redirect("courses/")
+
+  period_terms = (Termin.objects.
+                  filter(CourseUID__exact=course_uid).
+                  select_related("CourseUID").
+                  select_related("terminperiod"))
+  single_terms = (Termin.objects.
+                  filter(CourseUID__exact=course_uid).
+                  select_related("CourseUID").
+                  select_related("terminsingle").
+                  filter(kind__exact='LEC'))
+
+  course = course_query_res[0]
+
+  exam_list = single_terms.filter(kind__exact="EXM").all()
+  project_list = single_terms.filter(kind__exact="PRJ").all()
+  lecture_list = period_terms.filter(kind__exact="LEC").all()
+  practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+  print(exam_list)
+  return render(request, "WIS2_app/course_details.html",
+                {'user': True,
+                 'course': course,
+                 'exam_list': exam_list,
+                 'project_list': project_list,
+                 'lecture_list': lecture_list,
+                 'practice_lecture_list': practice_lecture_list})

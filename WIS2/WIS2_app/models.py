@@ -93,7 +93,7 @@ class Termin(models.Model):
     RoomUID = models.ForeignKey(Room, on_delete=models.DO_NOTHING)
     max_points = models.PositiveIntegerField()
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, default="pulsemestralka")
 
     description = models.CharField(max_length=2000)
     kind = models.CharField(max_length=3, choices=Kinds.choices, default=Kinds.ONE_TIME)
@@ -101,21 +101,34 @@ class Termin(models.Model):
 
 # specializuju at nemusime mit ruzne vztazne pro period a single terminy
 class TerminPeriod(models.Model):
-    TerminID = models.ForeignKey(Termin, on_delete=models.CASCADE, primary_key=True)
+    TerminID = models.OneToOneField(Termin, on_delete=models.CASCADE, primary_key=True)
 
+    class Kind(models.TextChoices):
+      PRACTICE_LECTURE = ('PLEC', 'Practice lecture')
+      LECTURE = ('LEC', 'Lecture')
 
+    kind = models.CharField(max_length=5,
+                            choices=Kind.choices,
+                            default=Kind.LECTURE)
     start = models.DateTimeField()
     repeats = models.PositiveIntegerField()
     periodicity = models.PositiveIntegerField()
 
 
 class TerminSingle(models.Model):
-    TerminID = models.ForeignKey(Termin, on_delete=models.CASCADE, primary_key=True)
+    TerminID = models.OneToOneField(Termin, on_delete=models.CASCADE, primary_key=True)
 
+    class Kind(models.TextChoices):
+        EXAM = ('EXM', "Exam")
+        PROJECT = ('PRJ', "Project")
+
+    kind = models.CharField(max_length=5,
+                            choices=Kind.choices,
+                            default=Kind.EXAM)
     date = models.DateTimeField()
 
 
-### Vztazna na BODY
+# Vztazna na BODY
 class Termin2Body(models.Model):
     TerminUID = models.ForeignKey(Termin, on_delete=models.CASCADE)
     StudentUID = models.ForeignKey(Student, on_delete=models.CASCADE)
