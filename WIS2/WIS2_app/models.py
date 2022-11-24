@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 
@@ -33,11 +34,6 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class User(models.Model):
-    UID = models.CharField(max_length=8, primary_key=True)
-    password = models.CharField(max_length=100)
 
 
 ### Vztazne pro typy userov
@@ -90,7 +86,7 @@ class Termin(models.Model):
         PERIODIC = ('PER', 'Periodic')
         ONE_TIME = ('ONE', 'OneTime')
 
-    ID = models.UUIDField(primary_key=True)
+    ID = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
     CourseUID = models.ForeignKey(Course, on_delete=models.CASCADE)
 
