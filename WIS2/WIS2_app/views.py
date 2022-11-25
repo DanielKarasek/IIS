@@ -2,12 +2,11 @@ from django.http.request import HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions
-from django.db.models import Q
+from django.db.models import Q, Count
 from .forms import CreateCourseForm
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
-
 
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
@@ -25,12 +24,16 @@ def courses(request: HttpRequest) -> HttpResponse:
     registered_courses = []
     if user_kind["user"]:
         # try to extract user courses
-        registered_courses = (Student.objects.
-                              select_related('CourseUID').
-                              filter(UserUID__exact=request.user.id).
+        registered_courses = (Course.objects.
+                              select_related().
+                              annotate(count=Count('student')).
+                              filter(student__UserUID__exact=request.user.id).
                               all())
-
-    not_registered = (Course.objects.exclude(student__UserUID__exact=request.user.id).all())
+    not_registered = (Course.objects.
+                      select_related().
+                      exclude(student__UserUID__exact=request.user.id).
+                      annotate(count=Count('student')).
+                      all())
 
     # get all existing courses
     return render(request, "WIS2_app/courses.html", {'course_list': not_registered,
@@ -42,11 +45,15 @@ def courses(request: HttpRequest) -> HttpResponse:
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
     #if the user is already in the course do nothing
     try:
-      _course = Course.objects.get(Q(UID=course_uid))
+        _course = Course.objects.get(Q(UID=course_uid))
+        students = Student.objects.select_related('CourseUID').filter(CourseUID__exact=course_uid).count()
+        print(students, _course.student_limit)
+        if students >= _course.student_limit:
+            return redirect('/courses/')
     except django.core.exceptions.ObjectDoesNotExist:
-      return redirect('/courses/')
+        return redirect('/courses/')
     try:
-        _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+        _student = Student.objects.get(UserUID__exact=request.user.id, CourseUID__exact=course_uid)
     except django.core.exceptions.ObjectDoesNotExist:
         new_student = Student()
         new_student.CourseUID = _course
@@ -62,7 +69,10 @@ def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
 def courses_leave(request: HttpRequest, course_uid) -> HttpResponse:
     try:
         _course = Course.objects.get(Q(UID=course_uid))
-        _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+        _student = (Student.objects.
+                    select_related("CourseUID").
+                    filter(UserUID__exact=request.user.id).
+                    filter(CourseUID__exact=course_uid))
     except django.core.exceptions.ObjectDoesNotExist:
         return redirect('/courses/')
 

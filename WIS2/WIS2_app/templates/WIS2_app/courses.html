@@ -15,13 +15,13 @@
                 </tr>
                 {% for item in registered_course_list %}
                 <tr>
-                    <th><a href="detail/{{ item.CourseUID.UID }}">{{item.CourseUID.UID}}</a></th>
-                    <th>{{item.CourseUID.name}}</th>
-                    <th>{{item.CourseUID.credits}}</th>
-                    <th>{{item.CourseUID.student_limit}}</th>
-                    <th>{{item.CourseUID.language}}</th>
-                    <th>{{item.CourseUID.kind}}</th>
-                    <th><a href="leave/{{item.CourseUID.UID}}" ><button> leave </button></a></th>
+                    <th><a href="detail/{{ item.UID }}">{{item.UID}}</a></th>
+                    <th>{{item.name}}</th>
+                    <th>{{item.credits}}</th>
+                    <th>{{ item.count }}/{{item.student_limit}}</th>
+                    <th>{{item.language}}</th>
+                    <th>{{item.kind}}</th>
+                    <th><a href="leave/{{item.UID}}" ><button> leave </button></a></th>
                 </tr>
                     {% endfor %}
             {% endif %}
@@ -40,7 +40,7 @@
                 <th><a href="detail/{{ item.UID }}">{{item.UID}}</a></th>
                 <th>{{item.name}}</th>
                 <th>{{item.credits}}</th>
-                <th>{{item.student_limit}}</th>
+                <th>{{ item.count }}/{{item.student_limit}}</th>
                 <th>{{item.language}}</th>
                 <th>{{item.kind}}</th>
                 {% if user %}
