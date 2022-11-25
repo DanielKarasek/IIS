@@ -16,6 +16,6 @@ urlpatterns = [
   path('create_course/', views.courses_create, name="create_course"),
   path('courses/join/<slug:course_uid>/', views.courses_join),
   path('courses/leave/<slug:course_uid>/', views.courses_leave),
-  path('course_detail/<slug:course_uid>/', views.course_detail, name="course_detail")
+  path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail")
 
 ]

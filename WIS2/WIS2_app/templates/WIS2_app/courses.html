@@ -15,13 +15,13 @@
                 </tr>
                 {% for item in registered_course_list %}
                 <tr>
-                    <th>{{item.CourseUID.UID}}</th>
+                    <th><a href="detail/{{ item.CourseUID.UID }}">{{item.CourseUID.UID}}</a></th>
                     <th>{{item.CourseUID.name}}</th>
                     <th>{{item.CourseUID.credits}}</th>
                     <th>{{item.CourseUID.student_limit}}</th>
                     <th>{{item.CourseUID.language}}</th>
                     <th>{{item.CourseUID.kind}}</th>
-                    <th><button name={{item.UID}} > leave </button></th>
+                    <th><a href="leave/{{item.CourseUID.UID}}" ><button> leave </button></a></th>
                 </tr>
                     {% endfor %}
             {% endif %}
@@ -36,14 +36,15 @@
             </tr>
             {% for item in course_list%}
             <tr>
-                <th>{{item.UID}}</th>
+
+                <th><a href="detail/{{ item.UID }}">{{item.UID}}</a></th>
                 <th>{{item.name}}</th>
                 <th>{{item.credits}}</th>
                 <th>{{item.student_limit}}</th>
                 <th>{{item.language}}</th>
                 <th>{{item.kind}}</th>
                 {% if user %}
-                <th><button name={{item.UID}} > reg </button></th>
+                    <th><a href="join/{{item.UID}}" ><button> reg </button></a></th>
                 {% endif %}
             </tr>
             {% endfor %}
