@@ -10,7 +10,9 @@ from .helper_functions import get_user_kind
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "WIS2_app/index.html", {'user': False, 'garant': False, 'lecturer': False})
+    user_kind = get_user_kind(request)
+
+    return render(request, "WIS2_app/index.html", user_kind)
 
 
 def user(request: HttpRequest) -> HttpResponse:
@@ -19,19 +21,18 @@ def user(request: HttpRequest) -> HttpResponse:
 
 
 def courses(request: HttpRequest) -> HttpResponse:
-    user_logged_in = False
-    registered_courses = []
-    if request.user.is_authenticated:
-        #show registered course list and buttons
-        user_logged_in = True
-
-        #try to extract user courses
+    user_kind = get_user_kind(request)
+    if user_kind["user"]:
+        # try to extract user courses
         try:
-            registered_courses = Student.CourseUID.objects.all()
+            registered_courses = (Student.objects.
+                                  select_related('CourseUID').
+                                  filter(UserUID__exact=request.user.id).
+                                  all())
         except django.core.exceptions.ObjectDoesNotExist:
             pass
 
-    #get all existing courses
+    # get all existing courses
     _courses = []
     try:
         _courses = Course.objects.all()
@@ -39,7 +40,7 @@ def courses(request: HttpRequest) -> HttpResponse:
         pass
     return render(request, "WIS2_app/courses.html", {'course_list': _courses,
                                                      'registered_course_list': registered_courses,
-                                                     'user': user_logged_in})
+                                                     **user_kind})
 
 
 @login_required

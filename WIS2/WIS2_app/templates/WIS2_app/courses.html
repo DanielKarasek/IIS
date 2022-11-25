@@ -15,12 +15,12 @@
                 </tr>
                 {% for item in registered_course_list %}
                 <tr>
-                    <th>{{item.UID}}</th>
-                    <th>{{item.name}}</th>
-                    <th>{{item.credits}}</th>
-                    <th>{{item.student_limit}}</th>
-                    <th>{{item.language}}</th>
-                    <th>{{item.kind}}</th>
+                    <th>{{item.CourseUID.UID}}</th>
+                    <th>{{item.CourseUID.name}}</th>
+                    <th>{{item.CourseUID.credits}}</th>
+                    <th>{{item.CourseUID.student_limit}}</th>
+                    <th>{{item.CourseUID.language}}</th>
+                    <th>{{item.CourseUID.kind}}</th>
                     <th><button name={{item.UID}} > leave </button></th>
                 </tr>
                     {% endfor %}
