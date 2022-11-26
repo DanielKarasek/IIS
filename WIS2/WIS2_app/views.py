@@ -16,7 +16,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def user(request: HttpRequest) -> HttpResponse:
-
     return render(request, "WIS2_app/user/user.html", {})
 
 
@@ -40,21 +39,21 @@ def courses(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
-    #if the user is already in the course do nothing
+    # if the user is already in the course do nothing
     try:
-      _course = Course.objects.get(Q(UID=course_uid))
+        _course = Course.objects.get(Q(UID=course_uid))
     except django.core.exceptions.ObjectDoesNotExist:
-      return redirect('/courses/')
+        return redirect('/courses/')
     try:
         _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
     except django.core.exceptions.ObjectDoesNotExist:
         new_student = Student()
         new_student.CourseUID = _course
         new_student.UserUID = request.user
-        #confirmed status
+        # confirmed status
         new_student.save()
 
-    #vytvorit asi aj body k terminom tuna?
+    # vytvorit asi aj body k terminom tuna?
     return redirect('/courses/')
 
 
@@ -91,30 +90,47 @@ def new_course(request: HttpRequest) -> HttpResponse:
 
 
 def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
-  course_query_res = Course.objects.filter(UID__exact=course_uid).all()
+    course_query_res = Course.objects.filter(UID__exact=course_uid).all()
 
-  if not len(course_query_res):
-    return redirect("/courses/")
+    if not len(course_query_res):
+        return redirect("/courses/")
 
-  period_terms = (TerminPeriod.objects.
-                  select_related('TerminID').
-                  filter(TerminID__CourseUID__exact=course_uid))
+    period_terms = (TerminPeriod.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
 
-  single_terms = (TerminSingle.objects.
-                  select_related('TerminID').
-                  filter(TerminID__CourseUID__exact=course_uid))
+    single_terms = (TerminSingle.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
 
-  course = course_query_res[0]
+    course = course_query_res[0]
 
-  exam_list = single_terms.filter(kind__exact="EXM").all()
-  project_list = single_terms.filter(kind__exact="PRJ").all()
-  lecture_list = period_terms.filter(kind__exact="LEC").all()
-  practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
-  print(get_user_kind(request))
-  return render(request, "WIS2_app/course_details.html",
-                {'user': True,
-                 'course': course,
-                 'exam_list': exam_list,
-                 'project_list': project_list,
-                 'lecture_list': lecture_list,
-                 'practice_lecture_list': practice_lecture_list})
+    exam_list = single_terms.filter(kind__exact="EXM").all()
+    project_list = single_terms.filter(kind__exact="PRJ").all()
+    lecture_list = period_terms.filter(kind__exact="LEC").all()
+    practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+    print(get_user_kind(request))
+    return render(request, "WIS2_app/course_details.html",
+                  {'user': True,
+                   'course': course,
+                   'exam_list': exam_list,
+                   'project_list': project_list,
+                   'lecture_list': lecture_list,
+                   'practice_lecture_list': practice_lecture_list})
+
+
+@login_required
+def termins(request: HttpRequest) -> HttpResponse:
+    # get registered courses
+    user_kind = get_user_kind(request)
+    registered_courses = []
+    if user_kind["user"]:
+        # try to extract user courses
+        registered_courses = (Student.objects.
+                              select_related('CourseUID').
+                              filter(UserUID__exact=request.user.id).
+                              all())
+    return render(request, "WIS2_app/courses/course_termins.html", {'user': True,
+                                                                    'course_list': registered_courses})
+
+    pass
