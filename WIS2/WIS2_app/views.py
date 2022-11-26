@@ -22,15 +22,20 @@ def user(request: HttpRequest) -> HttpResponse:
 def courses(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
     registered_courses = []
-    if user_kind["user"]:
-        # try to extract user courses
-        registered_courses = (Student.objects.
-                              select_related('CourseUID').
-                              filter(UserUID__exact=request.user.id).
-                              all())
+    try:
+        if user_kind["user"]:
+            # try to extract user courses
+            registered_courses = (Student.objects.
+                                  select_related('CourseUID').
+                                  filter(UserUID__exact=request.user.id).
+                                  all())
 
-    not_registered = (Course.objects.exclude(student__UserUID__exact=request.user.id).all())
-
+            not_registered = (Course.objects.exclude(student__UserUID__exact=request.user.id).all())
+        else:
+            not_registered = Course.objects.all()
+    except:
+        registered_courses = []
+        not_registered = []
     # get all existing courses
     return render(request, "WIS2_app/courses.html", {'course_list': not_registered,
                                                      'registered_course_list': registered_courses,
@@ -76,6 +81,11 @@ def courses_create(request: HttpRequest) -> HttpResponse:
         form = CreateCourseForm(request.POST)
         if form.is_valid():
             form.save()
+            _garant = Garant()
+            _garant.CourseUID = Course.objects.get(Q(UID=form.cleaned_data['uid']))
+            _garant.UserUID = request.user
+            _garant.save()
+
     else:
         form = CreateCourseForm()
 
@@ -109,7 +119,6 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     project_list = single_terms.filter(kind__exact="PRJ").all()
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
-    print(get_user_kind(request))
     return render(request, "WIS2_app/course_details.html",
                   {'user': True,
                    'course': course,
@@ -133,4 +142,3 @@ def termins(request: HttpRequest) -> HttpResponse:
     return render(request, "WIS2_app/courses/course_termins.html", {'user': True,
                                                                     'course_list': registered_courses})
 
-    pass
