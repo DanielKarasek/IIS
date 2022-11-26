@@ -49,14 +49,28 @@ def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
         _course = Course.objects.get(Q(UID=course_uid))
     except django.core.exceptions.ObjectDoesNotExist:
         return redirect('/courses/')
+
     try:
-        _student = Student.objects.get(Q(UserUID=request.user) and Q(CourseUID=_course))
+        _student = Student.objects.get(Q(UserUID=request.user) & Q(CourseUID=_course))
     except django.core.exceptions.ObjectDoesNotExist:
-        new_student = Student()
-        new_student.CourseUID = _course
-        new_student.UserUID = request.user
-        # confirmed status
-        new_student.save()
+        _student = None
+    try:
+        _garant = Garant.objects.get(Q(UserUID=request.user) & Q(CourseUID=_course))
+    except django.core.exceptions.ObjectDoesNotExist:
+        _garant = None
+    try:
+        _teacher = Teacher.objects.get(Q(UserUID=request.user) & Q(CourseUID=_course))
+    except django.core.exceptions.ObjectDoesNotExist:
+        _teacher = None
+
+    if (_student or _garant or _teacher):
+        return redirect('/courses/')
+
+    new_student = Student()
+    new_student.CourseUID = _course
+    new_student.UserUID = request.user
+    # confirmed status
+    new_student.save()
 
     # vytvorit asi aj body k terminom tuna?
     return redirect('/courses/')
@@ -85,18 +99,10 @@ def courses_create(request: HttpRequest) -> HttpResponse:
             _garant.CourseUID = Course.objects.get(Q(UID=form.cleaned_data['uid']))
             _garant.UserUID = request.user
             _garant.save()
-
     else:
         form = CreateCourseForm()
 
     return render(request, "WIS2_app/user/create_course.html", {'form': form})
-
-
-def new_course(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        pass
-    else:
-        pass
 
 
 def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
