@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 {% extends 'WIS2_app/base.html' %}
-{% comment %}
-remove comment after testing
-{% #if user.is_staff %}
-{% endcomment %}
+
+
+{% if user.is_staff %}
+
 {% block content %}
     <table>
         <tr>
@@ -11,24 +11,23 @@ remove comment after testing
                 <form method="post">
                     {% csrf_token %}
                     {{ form }}
-                    <button type="submit">Add new room</button>
+                    <button type="submit">Pridat mistnost</button>
                 </form>
             </td>
         </tr>
         <tr>
-            <th>Room number</th>
-            <th>Delete room</th>
+            <th>Cislo mistnosti</th>
+            <th>Vymazat mistnost</th>
         </tr>
         {%  for room in rooms %}
         <tr>
             <td> {{ room.roomUID }}</td>
-            <td> <a href="delete/{{ room.roomUID }}/">Delete</a></td>
+            <td> <a href="delete/{{ room.roomUID }}/">Vymazat</a></td>
         </tr>
         {% endfor %}
     </table>
 {% endblock %}
-{% comment %}
+
 {% else %}
     <meta http-equiv="Refresh" content="0; url=''"/>
 {% endif %}
-{% endcomment %}
