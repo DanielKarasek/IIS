@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import admin_views
+
 urlpatterns = [
 
   path('', views.index, name="index"),
@@ -12,6 +13,8 @@ urlpatterns = [
   path('admin/garants/<slug:course_uid>/', admin_views.garants_change_confirmed),
   #USER-----------------------------------------------------------------
   path('user/', views.user, name="user"),
+  path('user/change_password/', views.user_change_password, name="delete_password"),
+  path('user/delete/', views.user_delete, name="delete_password"),
   #COURSE---------------------------------------------------------------
   path('courses/', views.courses, name="courses"),
   path('my_courses/', views.my_courses, name="my_courses"),

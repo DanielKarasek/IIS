@@ -29,17 +29,21 @@
                 <td>{{ exam.date }}</td>
                 <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
                 <td>{{ exam.TerminID.max_points }}</td>
-                <td>
-                    <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
-                        <button> Remove </button>
-                    </a>
-                </td>
+                {% if is_course_garant %}
+                    <td>
+                        <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
+                            <button> Remove </button>
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
-    <a href="/courses/create_exam/{{ course.UID }}">
-        <button>Add exam</button>
-    </a>
+    {% if is_course_garant %}
+        <a href="/courses/create_exam/{{ course.UID }}">
+            <button>Add exam</button>
+        </a>
+    {% endif %}
     <h2>Projekty</h2>
     <table>
         <tr>
@@ -52,17 +56,22 @@
                 <td>{{ project.TerminID.name }}</td>
                 <td>{{ project.date }}</td>
                 <td>{{ project.TerminID.max_points }}</td>
-                <td>
-                    <a href="/courses/termins/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
-                        <button> Remove </button>
-                    </a>
-                </td>
+                {% if is_course_garant %}
+                    <td>
+
+                        <a href="/courses/termins/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
+                            <button> Remove </button>
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
         {% endfor %}
     </table>
-    <a href="/courses/create_project/{{ course.UID }}">
+    {% if is_course_garant %}
+        <a href="/courses/create_project/{{ course.UID }}">
         <button>Add project</button>
-    </a>
+        </a>
+    {% endif %}
     <h2>Cvičení</h2>
     <table>
         <tr>
@@ -79,17 +88,21 @@
                   <td>{{ practice_lecture.periodicity }}</td>
                   <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
                   <td>{{ practice_lecture.TerminID.max_points }}</td>
-                  <td>
-                      <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
-                          <button> Remove </button>
-                      </a>
-                  </td>
+                  {% if is_course_garant %}
+                      <td>
+                          <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
+                              <button> Remove </button>
+                          </a>
+                      </td>
+                 {% endif %}
               </tr>
         {% endfor %}
     </table>
-    <a href="/courses/create_practice_lecture/{{ course.UID }}">
-        <button>Add practice lecture</button>
-    </a>
+    {% if is_course_garant %}
+        <a href="/courses/create_practice_lecture/{{ course.UID }}">
+            <button>Add practice lecture</button>
+        </a>
+    {% endif %}
     <h2>Přednášky</h2>
     <table>
         <tr>
@@ -106,15 +119,19 @@
                   <td>{{ lecture.periodicity }}</td>
                   <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
                   <td>{{ lecture.TerminID.max_points }}</td>
-                  <td>
-                      <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
-                          <button> Remove </button>
-                      </a>
-                  </td>
+                  {% if is_course_garant %}
+                      <td>
+                          <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
+                              <button> Remove </button>
+                          </a>
+                      </td>
+                  {% endif %}
               </tr>
         {% endfor %}
     </table>
-    <a href="/courses/create_lecture/{{ course.UID }}">
-        <button>Add lecture</button>
-    </a>
+    {% if is_course_garant %}
+        <a href="/courses/create_lecture/{{ course.UID }}">
+            <button>Add lecture</button>
+        </a>
+    {% endif %}
 {% endblock %}
