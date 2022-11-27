@@ -1,14 +1,16 @@
 from django.http.request import HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 import django.core.exceptions
 from django.db.models import Q, Count
-from .forms import (CreateCourseForm, CreateTerminForm, CreateProjectForm,
+from .forms import (CreateCourseForm, CreateProjectForm,
                     CreateLectureForm, CreateExamForm, CreatePracticeLectureForm)
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
-
+import django.contrib.messages as messages
 
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
@@ -19,7 +21,31 @@ def index(request: HttpRequest) -> HttpResponse:
 def user(request: HttpRequest) -> HttpResponse:
   user_kind = get_user_kind(request)
 
-  return render(request, "WIS2_app/user/user.html", user_kind)
+  return render(request, "WIS2_app/user/user.html", {**user_kind})
+
+
+@login_required
+def user_change_password(request: HttpRequest) -> HttpResponse:
+  if request.method == 'POST':
+    form = PasswordChangeForm(request.user, request.POST)
+    if form.is_valid():
+      user = form.save()
+      update_session_auth_hash(request, user)  # Important!
+      messages.success(request, 'Your password was successfully updated!')
+      return redirect('/user/')
+    else:
+      messages.error(request, 'Please correct the error below.')
+  else:
+    form = PasswordChangeForm(request.user)
+  return render(request, 'WIS2_app/user/change_password.html', {
+    'form': form
+  })
+
+
+@login_required
+def user_delete(request: HttpRequest) -> HttpResponse:
+  request.user.delete()
+  return redirect('/logout/')
 
 
 # KURZY stuff general
@@ -72,6 +98,10 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     if request.POST.get("add"):
         return redirect("/courses/create_termin/" + course_uid)
 
+    is_garant = (Garant.objects.
+                 filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id).
+                 first())
+
     period_terms = (TerminPeriod.objects.
                     select_related('TerminID').
                     filter(TerminID__CourseUID__exact=course_uid))
@@ -81,19 +111,19 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
                     filter(TerminID__CourseUID__exact=course_uid))
 
     course = course_query_res[0]
-    print(course)
 
     exam_list = single_terms.filter(kind__exact="EXM").all()
     project_list = single_terms.filter(kind__exact="PRJ").all()
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
     return render(request, "WIS2_app/course_details.html",
-                  {'user': True,
-                   'course': course,
+                  {'course': course,
                    'exam_list': exam_list,
                    'project_list': project_list,
                    'lecture_list': lecture_list,
-                   'practice_lecture_list': practice_lecture_list})
+                   'practice_lecture_list': practice_lecture_list,
+                   'is_course_garant': is_garant,
+                   **get_user_kind(request)})
 
 
 # Kurzy interakce s uzivatelem
@@ -110,8 +140,6 @@ def my_courses(request: HttpRequest) -> HttpResponse:
 
     # get all existing courses
     return render(request, "WIS2_app/user/my_courses.html", {'registered_course_list': registered_courses, **user_kind})
-
-
 
 
 @login_required
