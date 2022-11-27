@@ -29,6 +29,11 @@
                 <td>{{ exam.date }}</td>
                 <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
                 <td>{{ exam.TerminID.max_points }}</td>
+                <td>
+                    <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
+                        <button> Remove </button>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -47,6 +52,11 @@
                 <td>{{ project.TerminID.name }}</td>
                 <td>{{ project.date }}</td>
                 <td>{{ project.TerminID.max_points }}</td>
+                <td>
+                    <a href="/courses/termins/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
+                        <button> Remove </button>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -69,6 +79,11 @@
                   <td>{{ practice_lecture.periodicity }}</td>
                   <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
                   <td>{{ practice_lecture.TerminID.max_points }}</td>
+                  <td>
+                      <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
+                          <button> Remove </button>
+                      </a>
+                  </td>
               </tr>
         {% endfor %}
     </table>
@@ -91,6 +106,11 @@
                   <td>{{ lecture.periodicity }}</td>
                   <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
                   <td>{{ lecture.TerminID.max_points }}</td>
+                  <td>
+                      <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
+                          <button> Remove </button>
+                      </a>
+                  </td>
               </tr>
         {% endfor %}
     </table>

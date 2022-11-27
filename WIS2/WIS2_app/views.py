@@ -50,6 +50,18 @@ def create_termin(request: HttpRequest, termin_type: str, course_uid: str):
                                                               'termin_type': termin_type2cz[termin_type],
                                                               **user_kind})
 
+
+def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> HttpResponse:
+  try:
+    _ = Course.objects.get(UID__exact=course_uid)
+    termin = Termin.objects.get(ID__exact=termin_uid)
+  except django.core.exceptions.ObjectDoesNotExist:
+    return redirect(f'/courses/detail/{course_uid}/')
+
+  termin.delete()
+  return redirect(f'/courses/detail/{course_uid}')
+
+
 def courses(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
     registered_courses = []

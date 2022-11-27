@@ -1,8 +1,6 @@
 from django.urls import path
 from . import views
 from . import admin_views
-
-
 urlpatterns = [
 
   path('', views.index, name="index"),
@@ -32,5 +30,7 @@ urlpatterns = [
   #path('courses/termins/<slug:course_uid>/body/<slug:termin_uid>/', ),
 
   #path('courses/termins/<slug:course_uid>/new/', ),
-  #path('courses/termins/<slug:course_uid>/delete/<slug:termin_uid>/', ),
+  path('courses/termins/<slug:course_uid>/delete/<slug:termin_uid>/', views.delete_termin, name="delete_termin"),
 ]
+
+
