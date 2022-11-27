@@ -11,7 +11,7 @@
     </tr>
     {% for item in course_list %}
         <th>{{ item.CourseUID.UID }}</th>
-        <th><a href="">{{item.CourseUID.name}}</a></th>
+        <th><a href="/coures/termins/{{ item.CourseUID.UID }}/">{{item.CourseUID.name}}</a></th>
         <th>{{item.CourseUID.kind}}</th>
         <th>GDEBODY</th>
         <th>{{item.CourseUID.credits}}</th>

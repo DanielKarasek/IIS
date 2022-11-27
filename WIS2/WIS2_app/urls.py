@@ -21,7 +21,7 @@ urlpatterns = [
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------
   path('courses/termins/', views.termins),
-  #path('coures/termins/<slug:course_uid>/', ),
+  path('coures/termins/<slug:course_uid>/', views.termins_course),
   #path('courses/termins/<slug:course_uid>/detail/<slug:termin_uid>/', ),
   #path('courses/termins/<slug:course_uid>/body/<slug:termin_uid>/', ),
 

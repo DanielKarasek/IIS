@@ -148,3 +148,27 @@ def termins(request: HttpRequest) -> HttpResponse:
     return render(request, "WIS2_app/courses/course_termins.html", {'user': True,
                                                                     'course_list': registered_courses})
 
+@login_required
+def termins_course(request: HttpRequest, course_uid):
+    user_kind = get_user_kind(request)
+    course_query_res = Course.objects.filter(UID__exact=course_uid).all()
+
+    if not len(course_query_res):
+        return redirect("/courses/")
+
+    period_terms = (TerminPeriod.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
+
+    single_terms = (TerminSingle.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
+
+    course = course_query_res[0]
+
+    exam_list = single_terms.filter(kind__exact="EXM").all()
+    project_list = single_terms.filter(kind__exact="PRJ").all()
+    lecture_list = period_terms.filter(kind__exact="LEC").all()
+    practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+
+    return render(request, "WIS2_app/courses/course_termins_detail.html")
