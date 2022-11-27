@@ -39,12 +39,15 @@ def room_delete(request: HttpRequest, room_uid):
 def garants(requst: HttpRequest):
     try:
         garants_confirmed = Garant.objects.get(Q(confirmed=True))
-        garants_unconfirmed = Garant.objects.get(Q(confirmed=False))
     except django.core.exceptions.ObjectDoesNotExist:
         garants_confirmed = []
+    try:
+        garants_unconfirmed = Garant.objects.get(Q(confirmed=False))
+    except django.core.exceptions.ObjectDoesNotExist:
         garants_unconfirmed = []
 
-    pass
+    return render(requst, "WIS2_app/admin/garants.html", {"garants_waiting": garants_unconfirmed,
+                                                          "garants_verified": garants_confirmed})
 
 
 @login_required
