@@ -12,10 +12,11 @@ from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
 import django.contrib.messages as messages
 
+
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
 
-    return render(request, "WIS2_app/index.html", user_kind)
+    return render(request, "WIS2_app/index.html", {**user_kind})
 
 
 def user(request: HttpRequest) -> HttpResponse:
