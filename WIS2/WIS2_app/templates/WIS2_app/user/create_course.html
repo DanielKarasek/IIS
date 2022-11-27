@@ -1,23 +1,20 @@
 {% extends 'WIS2_app/base.html' %}
 
 {% block content %}
-    <h1>List of courses</h1>
-    <ul>
-    <!--
-        {% for item in course_list%}
-            <li>{{item.name}}</li>
-        {% endfor %}
-    -->
-    </ul>
-    <br>
-    <div>
-    ruzne formaty jak muze form byt poskladany
-    </div>
-    <br>
+    <h1>Tvorba kurzu</h1>
     <form method="post">
         {%  csrf_token %}
         {{ form.as_p }}
-        <button name="sumbit">submit</button>
+        <p>Pole s '*' jsou povinné</p>
+        <button name="sumbit">Potvrdit</button>
     </form>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
 
 {% endblock %}

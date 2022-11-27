@@ -1,11 +1,9 @@
 {% extends 'WIS2_app/base.html' %}
 
 {% block content %}
-    <h1>List of courses</h1>
+    <h1>Seznam kurzů</h1>
     <table>
             {% if user %}
-                <a href="/create_course/"><BUTTON>Vytvorit kurz</BUTTON></a>
-
                 <tr><th>Moje predmety</th></tr>
                <tr>
                     <th>Zkratka</th>
@@ -23,7 +21,7 @@
                     <th>{{ item.count }}/{{item.student_limit}}</th>
                     <th>{{item.language}}</th>
                     <th>{{item.kind}}</th>
-                    <th><a href="leave/{{item.UID}}" ><button> leave </button></a></th>
+                    <th><a href="leave/{{item.UID}}" ><button> odregistrovat </button></a></th>
                 </tr>
                     {% endfor %}
             {% endif %}
@@ -46,10 +44,13 @@
                 <th>{{item.language}}</th>
                 <th>{{item.kind}}</th>
                 {% if user %}
-                    <th><a href="join/{{item.UID}}" ><button> reg </button></a></th>
+                    <th><a href="join/{{item.UID}}" ><button> registrovat </button></a></th>
                 {% endif %}
             </tr>
             {% endfor %}
     </table>
+    {% if user %}
+    <a href="/create_course/"><BUTTON>Vytvořit kurz</BUTTON></a>
+    {% endif %}
 
 {% endblock %}

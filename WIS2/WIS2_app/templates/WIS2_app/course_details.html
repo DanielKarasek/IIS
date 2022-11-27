@@ -4,7 +4,7 @@
     <h1> Shrnuti kurzu</h1>
     <table>
         <tr><td>Název</td><td>{{ course.name }}</td></tr>
-        <tr><td>Registrovaní</td><td>{{ course.student_limit }}</td></tr>
+        <tr><td>Max. studentů</td><td>{{ course.student_limit }}</td></tr>
         <tr><td>Jazyk</td><td>{{ course.language }}</td></tr>
         <tr><td>Kredity</td><td>{{ course.credits }}</td></tr>
         <tr><td>Druh</td><td>{{ course.kind }}</td></tr>
@@ -14,7 +14,7 @@
     <div>
     {{ course.description }}
     </div>
-    <h1>Terminy</h1>
+    <h1>Termíny</h1>
     <h2>Testy</h2>
     <table>
         <tr>
@@ -32,7 +32,7 @@
                 {% if is_course_garant %}
                     <td>
                         <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
-                            <button> Remove </button>
+                            <button> Smazat </button>
                         </a>
                     </td>
                 {% endif %}
@@ -41,7 +41,7 @@
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_exam/{{ course.UID }}">
-            <button>Add exam</button>
+            <button>Přidat zkoušku</button>
         </a>
     {% endif %}
     <h2>Projekty</h2>
@@ -60,7 +60,7 @@
                     <td>
 
                         <a href="/courses/termins/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
-                            <button> Remove </button>
+                            <button> Smazat </button>
                         </a>
                     </td>
                 {% endif %}
@@ -69,7 +69,7 @@
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_project/{{ course.UID }}">
-        <button>Add project</button>
+        <button>Přidat projekt</button>
         </a>
     {% endif %}
     <h2>Cvičení</h2>
@@ -91,7 +91,7 @@
                   {% if is_course_garant %}
                       <td>
                           <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
-                              <button> Remove </button>
+                              <button> Smazat</button>
                           </a>
                       </td>
                  {% endif %}
@@ -100,7 +100,7 @@
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_practice_lecture/{{ course.UID }}">
-            <button>Add practice lecture</button>
+            <button>Přidat cvičení</button>
         </a>
     {% endif %}
     <h2>Přednášky</h2>
@@ -122,7 +122,7 @@
                   {% if is_course_garant %}
                       <td>
                           <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
-                              <button> Remove </button>
+                              <button> Smazat</button>
                           </a>
                       </td>
                   {% endif %}
@@ -131,7 +131,7 @@
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_lecture/{{ course.UID }}">
-            <button>Add lecture</button>
+            <button>Přidat lekci</button>
         </a>
     {% endif %}
 {% endblock %}

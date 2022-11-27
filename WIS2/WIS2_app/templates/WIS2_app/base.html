@@ -37,7 +37,7 @@
     <title>WIS2</title>
 </head>
 <body>
-    <div class='topnav'>
+    <div class="navbar navbar-light bg-dark">
         {% block tabs%}
             <!-- historie predmetu -->
             {% if user %}
@@ -50,17 +50,17 @@
                 <a href="/courses/termins/">Terminy</a>
             {% endif %}
             {% if lecturer or garant%}
-                <a href='/lecture_administration'>Sprava Lekci</a>
+                <a href='/lecture_administration'>Správa Lekcí</a>
             {% endif %}
             {% if garant %}
-                <a href='/course_administration'>Sprava kurzu</a>
+                <a href='/course_administration'>Správa kurzu</a>
             {% endif %}
             {% if lecturer or  garant%}
-                <a href='/student_evaluation'>Hodnoceni studentu</a>
+                <a href='/student_evaluation'>Hodnocení studentů</a>
             {% endif %}
             {% if user.is_staff %}
-                <a href="/admin/rooms/">Sprava mistnosti</a>
-                <a href="/admin/garants/">Sprava garantu</a>
+                <a href="/admin/rooms/">Správa místností</a>
+                <a href="/admin/garants/">Správa garantů</a>
             {% endif %}
             {% if user %}
                 <a href="/logout/">Logout</a>

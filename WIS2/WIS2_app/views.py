@@ -32,10 +32,9 @@ def user_change_password(request: HttpRequest) -> HttpResponse:
     if form.is_valid():
       user = form.save()
       update_session_auth_hash(request, user)  # Important!
-      messages.success(request, 'Your password was successfully updated!')
-      return redirect('/user/')
+      messages.success(request, 'Vaše heslo bylo úspěšně změněno')
     else:
-      messages.error(request, 'Please correct the error below.')
+      messages.error(request, 'Prosím opravte následující chyby: ')
   else:
     form = PasswordChangeForm(request.user)
   return render(request, 'WIS2_app/user/change_password.html', {
@@ -80,11 +79,19 @@ def courses_create(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = CreateCourseForm(request.POST)
         if form.is_valid():
-            form.save()
-            _garant = Garant()
-            _garant.CourseUID = Course.objects.get(Q(UID=form.cleaned_data['uid']))
-            _garant.UserUID = request.user
-            _garant.save()
+            course_tmp1 = Course.objects.filter(UID__exact=form.cleaned_data['uid']).first()
+            course_tmp2 = Course.objects.filter(name__exact=form.cleaned_data['name']).first()
+            if course_tmp1 or course_tmp2:
+              messages.error(request, "Kurz s tímto názvem nebo zkratkou již existuje")
+              return render(request, "WIS2_app/user/create_course.html", {'form': form})
+            else:
+              form.save()
+              _garant = Garant()
+              _garant.CourseUID = Course.objects.get(Q(UID=form.cleaned_data['uid']))
+              _garant.UserUID = request.user
+              _garant.save()
+
+        return redirect("/courses/")
     else:
         form = CreateCourseForm()
 
