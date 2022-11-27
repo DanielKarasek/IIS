@@ -8,7 +8,9 @@
                 <form method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" name="Create" value ="Create">Create</button>
+
+                    <p>Pole s '*' jsou povinné</p>
+                    <button type="submit" name="Create" value ="Create">Vytvořit</button>
                 </form>
             </td>
         </tr>
