@@ -1,0 +1,32 @@
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <h1>List of courses</h1>
+    <table>
+            {% if user %}
+                <tr><th>Moje predmety</th></tr>
+               <tr>
+                    <th>Zkratka</th>
+                    <th>Jméno</th>
+                    <th>kredity</th>
+                    <th>limit studentů</th>
+                    <th>Jazyk</th>
+                    <th>Typ</th>
+                </tr>
+                {% for item in registered_course_list %}
+                <tr>
+                    <th><a href="detail/{{ item.CourseUID.UID }}">{{item.CourseUID.UID}}</a></th>
+                    <th>{{item.CourseUID.name}}</th>
+                    <th>{{item.CourseUID.credits}}</th>
+                    <th>{{item.CourseUID.student_limit}}</th>
+                    <th>{{item.CourseUID.language}}</th>
+                    <th>{{item.CourseUID.kind}}</th>
+                </tr>
+                    {% endfor %}
+
+            {% endif %}
+
+
+    </table>
+
+{% endblock %}

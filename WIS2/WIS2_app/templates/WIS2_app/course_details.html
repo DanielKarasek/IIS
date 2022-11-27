@@ -10,12 +10,12 @@
         <tr><td>Druh</td><td>{{ course.kind }}</td></tr>
 
     </table>
-    <h1>Popis</h1>>
+    <h1>Popis</h1>
     <div>
     {{ course.description }}
     </div>
     <h1>Terminy</h1>
-    <h2>testy</h2>
+    <h2>Testy</h2>
     <table>
         <tr>
             <td>Název</td>
@@ -27,8 +27,8 @@
             <tr>
                 <td>{{ exam.TerminID.name }}</td>
                 <td>{{ exam.date }}</td>
-                <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
-                <td>{{ exam.TerminID.max_points }}</td>
+                <td>{{ exam.Termin.RoomUID.roomUID }}</td>
+                <td>{{ exam.Termin.max_points }}</td>
             </tr>
         {% endfor %}
     </table>
@@ -85,4 +85,8 @@
               </tr>
         {% endfor %}
     </table>
+<form method = post>
+    {% csrf_token %}
+    <button type="submit" name="add" value ="add">Add</button>
+</form>
 {% endblock %}

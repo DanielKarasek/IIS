@@ -3,10 +3,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions
 from django.db.models import Q, Count
-from .forms import CreateCourseForm
+from .forms import CreateCourseForm, CreateTerminForm
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
+
 
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
@@ -39,6 +40,19 @@ def courses(request: HttpRequest) -> HttpResponse:
                                                      'registered_course_list': registered_courses,
                                                      **user_kind})
 
+@login_required
+def my_courses(request: HttpRequest) -> HttpResponse:
+    user_kind = get_user_kind(request)
+    registered_courses = []
+    if user_kind["user"]:
+        # try to extract user courses
+        registered_courses = (Student.objects.
+                              select_related('CourseUID').
+                              filter(UserUID__exact=request.user.id).
+                              all())
+
+    # get all existing courses
+    return render(request, "WIS2_app/user/my_courses.html", {'registered_course_list': registered_courses, **user_kind})
 
 @login_required
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
@@ -99,12 +113,40 @@ def courses_create(request: HttpRequest) -> HttpResponse:
 
     return render(request, "WIS2_app/user/create_course.html", {'form': form})
 
+#tuto to treba dorobit
+@login_required
+def course_termin_create(request: HttpRequest, course_uid) -> HttpResponse:
+    if request.method == 'POST':
+        form = CreateTerminForm(request.POST)
+        if form.is_valid():
+            #ci ideme periodicky termin alebo single
+            if request.POST.get("periodic"):
+                form.save("periodic", course_uid)
+                return redirect('/courses/detail/' + course_uid)
+            if request.POST.get("single"):
+                form.save("single", course_uid)
+                return redirect('/courses/detail/' + course_uid)
+    else:
+        form = CreateTerminForm()
+
+    return render(request, "WIS2_app/user/create_termin.html", {'form': form})
+
+
+@login_required
+def new_course(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+
 
 def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     course_query_res = Course.objects.filter(UID__exact=course_uid).all()
 
     if not len(course_query_res):
         return redirect("/courses/")
+    if request.POST.get("add"):
+        return redirect("/courses/create_termin/" + course_uid)
 
     period_terms = (TerminPeriod.objects.
                     select_related('TerminID').

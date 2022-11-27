@@ -12,7 +12,12 @@ TERMIN_KINDS = [
     ('PER', 'Periodic'),
     ('ONE', 'OneTime'),
 ]
-
+TERMIN_TYPE =[
+    ('PLEC', 'Practice lecture'),
+    ('LEC', 'Lecture'),
+    ('EXM', "Exam"),
+    ('PRJ', "Project"),
+]
 
 class CreateCourseForm(forms.Form):
     uid = forms.CharField(label="Short name", max_length=5, required=True)
@@ -56,20 +61,40 @@ class CreateRoomForm(forms.Form):
 
 
 class CreateTerminForm(forms.Form):
-    courseID = ''
+    #courseID = forms.CharField(label="courseid", required=True)   #forms.CharField(label="Course:", required=True, widget=forms.Select(choices=Course.objects.all()))
 
-    room = forms.CharField(label="Room number:", required=False)
+    room = forms.CharField(label="Room number:", required=True)
     points = forms.IntegerField(label="Maximum points:", required=True, min_value=0)
     kind = forms.CharField(label="Periodic?: ", required=True,
                            widget=forms.Select(choices=TERMIN_KINDS))
     desc = forms.CharField(label="Description", required=False,
                            widget=forms.Textarea)
+    kind_type = forms.CharField(label="TYPE", required=True, widget=forms.Select(choices=TERMIN_TYPE))
+    repeats = forms.IntegerField(label="repeats", required=False, min_value=0)
 
-    def save(self):
+    periodicity = forms.IntegerField(label="periodicity", required=False, min_value=0)
+
+    date = forms.DateTimeField(label="date", required=True)
+
+    def save(self, str, course_uid):
         termin = Termin()
-        termin.CourseUID = self.courseID
-        termin.RoomUID = self.cleaned_data['room']
+        termin.CourseUID = Course.objects.get(UID__exact=course_uid)
+        termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
         termin.max_points = self.cleaned_data['points']
         termin.kind = self.cleaned_data['kind']
         termin.description = self.cleaned_data['desc']
         termin.save()
+        if str == "periodic":
+            terminperiodic = TerminPeriod()
+            terminperiodic.kind = self.cleaned_data['kind_type']
+            terminperiodic.TerminID = Termin.objects.get(ID__exact=termin.ID)
+            terminperiodic.start = self.cleaned_data['date']
+            terminperiodic.repeats = self.cleaned_data['repeats']
+            terminperiodic.periodicity= self.cleaned_data['periodicity']
+            terminperiodic.save()
+        else:
+            terminsingle = TerminSingle()
+            terminsingle.TerminID = Termin.objects.get(ID__exact=termin.ID)
+            terminsingle.kind = self.cleaned_data['kind_type']
+            terminsingle.date = self.cleaned_data['date']
+            terminsingle.save()

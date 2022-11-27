@@ -18,7 +18,8 @@ from django.urls import path, include
 from WIS2_Login import views as login_views
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
+    path('index/', include("WIS2_app.urls")),
     path('admin/', include("WIS2_app.urls")),
     path('', include("WIS2_app.urls")),
     path('register/', login_views.register, name='register'),

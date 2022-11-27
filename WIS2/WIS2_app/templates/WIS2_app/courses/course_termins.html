@@ -10,11 +10,13 @@
         <th>Kr</th>
     </tr>
     {% for item in course_list %}
+    <tr>
         <th>{{ item.CourseUID.UID }}</th>
         <th><a href="/coures/termins/{{ item.CourseUID.UID }}/">{{item.CourseUID.name}}</a></th>
         <th>{{item.CourseUID.kind}}</th>
         <th>GDEBODY</th>
         <th>{{item.CourseUID.credits}}</th>
+    </tr>
     {% endfor %}
     </table>
 

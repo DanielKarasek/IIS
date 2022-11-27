@@ -13,10 +13,11 @@
             {% endif %}
                 <a href='/'>index</a>
                 <a href='/courses/'>Kurzy</a>
-            {% if user %}
+            {% if user or lecturer or garant%}
+                <a href='/my_courses'>Moje Kurzy</a>
                 <a href="/courses/termins/">Terminy</a>
             {% endif %}
-            {% if lecturer or  garant%}
+            {% if lecturer or garant%}
                 <a href='/lecture_administration'>Sprava Lekci</a>
             {% endif %}
             {% if garant %}

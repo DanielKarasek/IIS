@@ -1,0 +1,15 @@
+{% extends 'WIS2_app/base.html' %}
+
+
+{% block content %}
+        <tr>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" name="periodic" value ="periodic">Periodicky</button>
+                    <button type="submit" name="single" value ="single">Single</button>
+                </form>
+            </td>
+        </tr>
+{% endblock %}

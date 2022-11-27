@@ -6,6 +6,7 @@ from . import admin_views
 urlpatterns = [
 
   path('', views.index, name="index"),
+  path('index/', views.index, name="index"),
   #ADMIN----------------------------------------------------------------
   path('admin/rooms/', admin_views.room),
   path('admin/rooms/delete/<slug:room_uid>/', admin_views.room_delete),
@@ -15,13 +16,17 @@ urlpatterns = [
   path('user/', views.user, name="user"),
   #COURSE---------------------------------------------------------------
   path('courses/', views.courses, name="courses"),
+  path('my_courses/', views.my_courses, name="my_courses"),
   path('create_course/', views.courses_create, name="create_course"),
   path('courses/join/<slug:course_uid>/', views.courses_join),
   path('courses/leave/<slug:course_uid>/', views.courses_leave),
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
+  path('my_courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------
-  path('courses/termins/', views.termins),
   path('coures/termins/<slug:course_uid>/', views.termins_course),
+  #toto mam na test od seba
+  path('courses/create_termin/<slug:course_uid>/', views.course_termin_create, name="create_termin_course"),
+  #path('coures/termins/<slug:course_uid>/', ),
   #path('courses/termins/<slug:course_uid>/detail/<slug:termin_uid>/', ),
   #path('courses/termins/<slug:course_uid>/body/<slug:termin_uid>/', ),
 
