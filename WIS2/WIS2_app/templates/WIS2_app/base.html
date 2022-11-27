@@ -15,6 +15,7 @@
                 <a href='/courses/'>Kurzy</a>
             {% if user %}
                 <a href='/my_courses'>Moje Kurzy</a>
+                <a href="/courses/termins/">Terminy</a>
             {% endif %}
             {% if lecturer or  garant%}
                 <a href='/lecture_administration'>Sprava Lekci</a>
@@ -25,8 +26,12 @@
             {% if lecturer or  garant%}
                 <a href='/student_evaluation'>Hodnoceni studentu</a>
             {% endif %}
+            {% if user.is_staff %}
+                <a href="/admin/rooms/">Sprava mistnosti</a>
+                <a href="/admin/garants/">Sprava garantu</a>
+            {% endif %}
             {% if user %}
-                <a href="/login/">Logout</a>
+                <a href="/logout/">Logout</a>
             {% else %}
                 <a href="/logout/">Log In</a>
             {% endif %}

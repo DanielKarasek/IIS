@@ -1,0 +1,21 @@
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <table>
+    <tr>
+        <th>Zkr</th>
+        <th>Kurz</th>
+        <th>Typ</th>
+        <th>Body</th>
+        <th>Kr</th>
+    </tr>
+    {% for item in course_list %}
+        <th>{{ item.CourseUID.UID }}</th>
+        <th><a href="">{{item.CourseUID.name}}</a></th>
+        <th>{{item.CourseUID.kind}}</th>
+        <th>GDEBODY</th>
+        <th>{{item.CourseUID.credits}}</th>
+    {% endfor %}
+    </table>
+
+{% endblock %}

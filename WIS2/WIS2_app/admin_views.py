@@ -26,11 +26,12 @@ def room(request: HttpRequest):
 
 @login_required
 def room_delete(request: HttpRequest, room_uid):
-    try:
-        rooms = Room.objects.get(roomUID=room_uid)
-        rooms.delete()
-    except django.core.exceptions.ObjectDoesNotExist:
-        pass
+    if request.user.is_staff:
+        try:
+            rooms = Room.objects.get(roomUID=room_uid)
+            rooms.delete()
+        except django.core.exceptions.ObjectDoesNotExist:
+            pass
     return redirect('/admin/rooms/')
 
 
@@ -47,11 +48,12 @@ def garants(requst: HttpRequest):
 
 
 @login_required
-def garants_change_confirmed(request: HttpRequest, course):
-    try:
-        _garant = Garant.objects.get(Q(CourseUID=course))
-        _garant.confirmed = not (_garant.confirmed)
-        _garant.save()
-    except django.core.exceptions.ObjectDoesNotExist:
-        pass
-    pass
+def garants_change_confirmed(request: HttpRequest, course_uid):
+    if request.user.is_staff:
+        try:
+            _garant = Garant.objects.get(Q(CourseUID=course_uid))
+            _garant.confirmed = not (_garant.confirmed)
+            _garant.save()
+        except django.core.exceptions.ObjectDoesNotExist:
+            pass
+    return redirect('/admin/garants/')
