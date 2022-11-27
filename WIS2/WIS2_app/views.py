@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions
 from django.db.models import Q, Count
-from .forms import CreateCourseForm, CreateTerminForm
+from .forms import (CreateCourseForm, CreateTerminForm, CreateProjectForm,
+                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm)
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
@@ -16,12 +17,45 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def user(request: HttpRequest) -> HttpResponse:
-    return render(request, "WIS2_app/user/user.html", {})
+  user_kind = get_user_kind(request)
 
+  return render(request, "WIS2_app/user/user.html", user_kind)
+
+
+@login_required
+def create_termin(request: HttpRequest, termin_type: str, course_uid: str):
+  user_kind = get_user_kind(request)
+  termin_type2form = {'lecture': CreateLectureForm,
+                      'practice_lecture': CreatePracticeLectureForm,
+                      'exam': CreateExamForm,
+                      'project': CreateProjectForm}
+  termin_type2cz = {'lecture': 'přednášky',
+                    'practice_lecture': 'cvičení',
+                    'exam': 'zkoušky',
+                    'project': 'projektu'}
+  if request.method == 'POST':
+    form = termin_type2form[termin_type](request.POST)
+    if form.is_valid():
+      form.save(course_uid)
+      return redirect('/courses/detail/' + course_uid)
+  else:
+    form = termin_type2form[termin_type]()
+  try:
+    course = Course.objects.get(UID__exact=course_uid)
+  except django.core.exceptions.ObjectDoesNotExist:
+    return redirect('/courses/')
+
+  return render(request, "WIS2_app/user/create_termin.html", {'form': form,
+                                                              'course_name': course.name,
+                                                              'termin_type': termin_type2cz[termin_type],
+                                                              **user_kind})
 
 def courses(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
     registered_courses = []
+    not_registered = (Course.objects.
+                      select_related().
+                      annotate(count=Count('student')))
     if user_kind["user"]:
         # try to extract user courses
         registered_courses = (Course.objects.
@@ -29,11 +63,11 @@ def courses(request: HttpRequest) -> HttpResponse:
                               annotate(count=Count('student')).
                               filter(student__UserUID__exact=request.user.id).
                               all())
-    not_registered = (Course.objects.
-                      select_related().
-                      exclude(student__UserUID__exact=request.user.id).
-                      annotate(count=Count('student')).
-                      all())
+
+        not_registered = (not_registered.
+                          exclude(student__UserUID__exact=request.user.id))
+
+    not_registered = not_registered.all()
 
     # get all existing courses
     return render(request, "WIS2_app/courses.html", {'course_list': not_registered,
@@ -113,7 +147,7 @@ def courses_create(request: HttpRequest) -> HttpResponse:
 
     return render(request, "WIS2_app/user/create_course.html", {'form': form})
 
-#tuto to treba dorobit
+
 @login_required
 def course_termin_create(request: HttpRequest, course_uid) -> HttpResponse:
     if request.method == 'POST':
@@ -157,6 +191,7 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
                     filter(TerminID__CourseUID__exact=course_uid))
 
     course = course_query_res[0]
+    print(course)
 
     exam_list = single_terms.filter(kind__exact="EXM").all()
     project_list = single_terms.filter(kind__exact="PRJ").all()
@@ -184,6 +219,7 @@ def termins(request: HttpRequest) -> HttpResponse:
                               all())
     return render(request, "WIS2_app/courses/course_termins.html", {'user': True,
                                                                     'course_list': registered_courses})
+
 
 @login_required
 def termins_course(request: HttpRequest, course_uid):

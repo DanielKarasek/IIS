@@ -2,13 +2,13 @@
 
 
 {% block content %}
+    <h1> Tvorba {{ termin_type }} do kurzu {{ course_name }}</h1>
         <tr>
             <td>
                 <form method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" name="periodic" value ="periodic">Periodicky</button>
-                    <button type="submit" name="single" value ="single">Single</button>
+                    <button type="submit" name="Create" value ="Create">Create</button>
                 </form>
             </td>
         </tr>

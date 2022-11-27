@@ -27,11 +27,14 @@
             <tr>
                 <td>{{ exam.TerminID.name }}</td>
                 <td>{{ exam.date }}</td>
-                <td>{{ exam.Termin.RoomUID.roomUID }}</td>
-                <td>{{ exam.Termin.max_points }}</td>
+                <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
+                <td>{{ exam.TerminID.max_points }}</td>
             </tr>
         {% endfor %}
     </table>
+    <a href="/courses/create_exam/{{ course.UID }}">
+        <button>Add exam</button>
+    </a>
     <h2>Projekty</h2>
     <table>
         <tr>
@@ -47,6 +50,9 @@
             </tr>
         {% endfor %}
     </table>
+    <a href="/courses/create_project/{{ course.UID }}">
+        <button>Add project</button>
+    </a>
     <h2>Cvičení</h2>
     <table>
         <tr>
@@ -66,6 +72,9 @@
               </tr>
         {% endfor %}
     </table>
+    <a href="/courses/create_practice_lecture/{{ course.UID }}">
+        <button>Add practice lecture</button>
+    </a>
     <h2>Přednášky</h2>
     <table>
         <tr>
@@ -85,8 +94,7 @@
               </tr>
         {% endfor %}
     </table>
-<form method = post>
-    {% csrf_token %}
-    <button type="submit" name="add" value ="add">Add</button>
-</form>
+    <a href="/courses/create_lecture/{{ course.UID }}">
+        <button>Add lecture</button>
+    </a>
 {% endblock %}

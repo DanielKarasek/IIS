@@ -1,6 +1,6 @@
 from django import forms
 from .models import *
-from .validators import validate_is_positive, validate_alphanumeric_strings
+from .validators import validate_is_positive
 
 COURSE_KINDS = [
     ('REQ', 'Required'),
@@ -18,6 +18,7 @@ TERMIN_TYPE =[
     ('EXM', "Exam"),
     ('PRJ', "Project"),
 ]
+
 
 class CreateCourseForm(forms.Form):
     uid = forms.CharField(label="Short name", max_length=5, required=True)
@@ -60,6 +61,75 @@ class CreateRoomForm(forms.Form):
         room.save()
 
 
+class GeneralTermForm(forms.Form):
+  name = forms.CharField(label="Name:", required=True)
+  room = forms.CharField(label="Room number:", required=True)
+  points = forms.IntegerField(label="Maximum points:", required=True, min_value=0)
+  desc = forms.CharField(label="Description", required=False,
+                         widget=forms.Textarea)
+  kind_perxsingle = None
+
+  def save(self, course_uid):
+    termin = Termin()
+    termin.CourseUID = Course.objects.get(UID__exact=course_uid)
+    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
+    termin.max_points = self.cleaned_data['points']
+    termin.kind = self.kind_perxsingle
+    termin.description = self.cleaned_data['desc']
+    termin.save()
+    return termin
+
+
+class CreatePeriodicForm(GeneralTermForm):
+  repeats = forms.IntegerField(label="Lectures count", required=False, min_value=0)
+  periodicity = forms.IntegerField(label="Periodicity", required=False, min_value=0)
+  date = forms.DateTimeField(label="First date", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M",
+                             required=True)
+
+  kind_perxsingle = 'PER'
+  kind_plecxlec = None
+
+  def save(self, course_uid):
+    termin = super().save(course_uid)
+    terminperiodic = TerminPeriod()
+    terminperiodic.kind = self.kind_plecxlec
+    terminperiodic.TerminID = Termin.objects.get(ID__exact=termin.ID)
+    terminperiodic.start = self.cleaned_data['date']
+    terminperiodic.repeats = self.cleaned_data['repeats']
+    terminperiodic.periodicity = self.cleaned_data['periodicity']
+    terminperiodic.save()
+
+
+class CreateLectureForm(CreatePeriodicForm):
+  kind_plecxlec = 'LEC'
+
+
+class CreatePracticeLectureForm(CreatePeriodicForm):
+  kind_plecxlec = 'PLEC'
+
+
+class CreateOneShotTerm(GeneralTermForm):
+  date = forms.DateTimeField(label="date", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M", required=True)
+  kind_perxsingle = 'ONE'
+  kind_exmxproj = None
+
+  def save(self, course_uid):
+    termin = super().save(course_uid)
+    terminsingle = TerminSingle()
+    terminsingle.TerminID = Termin.objects.get(ID__exact=termin.ID)
+    terminsingle.kind = self.kind_exmxproj
+    terminsingle.date = self.cleaned_data['date']
+    terminsingle.save()
+
+
+class CreateProjectForm(CreateOneShotTerm):
+    kind_exmxproj = "PRJ"
+
+
+class CreateExamForm(CreateOneShotTerm):
+    kind_exmxproj = "EXM"
+
+
 class CreateTerminForm(forms.Form):
     #courseID = forms.CharField(label="courseid", required=True)   #forms.CharField(label="Course:", required=True, widget=forms.Select(choices=Course.objects.all()))
 
@@ -73,13 +143,13 @@ class CreateTerminForm(forms.Form):
     repeats = forms.IntegerField(label="repeats", required=False, min_value=0)
 
     periodicity = forms.IntegerField(label="periodicity", required=False, min_value=0)
-
-    date = forms.DateTimeField(label="date", required=True)
+    date = forms.DateTimeField(label="date", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M",  required=True)
 
     def save(self, str, course_uid):
         termin = Termin()
         termin.CourseUID = Course.objects.get(UID__exact=course_uid)
         termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
+        print("room")
         termin.max_points = self.cleaned_data['points']
         termin.kind = self.cleaned_data['kind']
         termin.description = self.cleaned_data['desc']
@@ -90,7 +160,7 @@ class CreateTerminForm(forms.Form):
             terminperiodic.TerminID = Termin.objects.get(ID__exact=termin.ID)
             terminperiodic.start = self.cleaned_data['date']
             terminperiodic.repeats = self.cleaned_data['repeats']
-            terminperiodic.periodicity= self.cleaned_data['periodicity']
+            terminperiodic.periodicity = self.cleaned_data['periodicity']
             terminperiodic.save()
         else:
             terminsingle = TerminSingle()

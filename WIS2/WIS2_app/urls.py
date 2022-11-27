@@ -21,9 +21,10 @@ urlpatterns = [
   path('courses/join/<slug:course_uid>/', views.courses_join),
   path('courses/leave/<slug:course_uid>/', views.courses_leave),
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
+  path('courses/create_<slug:termin_type>/<slug:course_uid>/', views.create_termin),
   path('my_courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------
-  path('coures/termins/<slug:course_uid>/', views.termins_course),
+  path('courses/termins/<slug:course_uid>/', views.termins, name="termins"),
   #toto mam na test od seba
   path('courses/create_termin/<slug:course_uid>/', views.course_termin_create, name="create_termin_course"),
   #path('coures/termins/<slug:course_uid>/', ),
