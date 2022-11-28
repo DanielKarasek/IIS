@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-2"/>
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>WIS2</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>Daniel Karásek <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xkaras38@stud.fit.vutbr.cz">xkaras38@stud.fit.vutbr.cz</a> -
+		popis činnosti v týmu
+	</dd>
+	<dd>Denis Dzíbela  <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xdzibe00@stud.fit.vutbr.cz">xdzibe00@stud.fit.vutbr.cz</a> -
+		popis činnosti v týmu
+	</dd>
+  <dd>Michal Polonec  <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xpolon02@stud.fit.vutbr.cz">xpolon02@stud.fit.vutbr.cz</a> -
+		popis činnosti v týmu
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="https://xkaraswis2.herokuapp.com/">https://xkaraswis2.herokuapp.com/</a></dd>
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+<p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
+<table>
+<tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin</td><td>jahody123</td><td>Administrátor</td></tr>
+</table>
+
+
+<h3>Video</h3>
+
+<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p> 
+
+<h2>Implementace</h2>
+<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují jednotlivé případy použití.</p>
+
+<h3>Databáze</h3>
+
+<img src="ERD.png" alt="ER diagram"/>
+
+<h2>Instalace</h2>
+    <h3>Spuštení servru</h3>
+        V prostředí windows:<br>
+        <code>
+            $py ./manage.py runserver<br>
+        </code>
+        V prostředí Linux:<br>
+        <code>
+            $gunicorn WIS2.wsgi<br>
+        </code>
+    <h3>Softwarové požadavky</h3>
+    Python verze >= 3.10<br>
+    Požadované balíčky:<br>
+    <code>
+        asgiref==3.5.2<br>
+        Django==3.2.16<br>
+        psycopg2==2.9.4<br>
+        pytz==2022.4<br>
+        sqlparse==0.4.3<br>
+        typing_extensions==4.4.0<br>
+        gunicorn<br>
+    </code>
+    <h3>Inicializace databáze</h3>
+    <code>
+        $python ./manage.py makemigrations<br>
+        $python ./manage.py migrate
+    </code>
+
+<h2>Známé problémy</h2>
+<p>Zde popište, které body zadání nejsou implementovány a z jakého důvodu. Např. &bdquo;Z časových důvodů nebyla implementována správa uživatelů.&rdquo; Pomůžete tím zrychlit hodnocení, když neimplementované funkce nebudeme muset dlouze hledat.</p>
+
+</body>
+</html>
