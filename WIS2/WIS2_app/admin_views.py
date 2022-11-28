@@ -38,7 +38,7 @@ def room_delete(request: HttpRequest, room_uid):
 @login_required
 def garants(requst: HttpRequest):
     try:
-        garants_confirmed = Garant.objects.get_queryset(Q(confirmed=True))
+        garants_confirmed = Garant.objects.get(Q(confirmed=True))
     except django.core.exceptions.ObjectDoesNotExist:
         garants_confirmed = []
     try:
