@@ -1,28 +1,35 @@
-from django.http.request import HttpRequest
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+
+import django.contrib.messages as messages
 import django.core.exceptions
-from django.db.models import Q, Count
+
+from django.db.models import Q, Count, OuterRef, Subquery
+from django.http.request import HttpRequest
+from django.shortcuts import render, redirect
+from django.http.response import HttpResponse
+
+from .helper_functions import get_user_kind, get_body_course, get_body_termin
+from .models import Course, Garant, Student, Teacher, TerminPeriodic, Termin, TerminSingle
 from .forms import (CreateCourseForm, CreateProjectForm,
                     CreateLectureForm, CreateExamForm, CreatePracticeLectureForm,
                     CreateTermin2Body)
-from .models import *
-from django.http.response import HttpResponse
-from .helper_functions import get_user_kind, get_body_course, get_body_termin
-import django.contrib.messages as messages
-
-from django.db.models import OuterRef, Subquery
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    """
+    The introdoction site view
+    """
     user_kind = get_user_kind(request)
 
     return render(request, "WIS2_app/index.html", {**user_kind})
 
 
 def user(request: HttpRequest) -> HttpResponse:
+  """
+  User tab view
+  """
   user_kind = get_user_kind(request)
 
   return render(request, "WIS2_app/user/user.html", {**user_kind})
@@ -30,6 +37,9 @@ def user(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def user_change_password(request: HttpRequest) -> HttpResponse:
+  """
+  User password change view + actual action
+  """
   if request.method == 'POST':
     form = PasswordChangeForm(request.user, request.POST)
     if form.is_valid():
@@ -47,12 +57,18 @@ def user_change_password(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def user_delete(request: HttpRequest) -> HttpResponse:
+  """
+  Account delete view + action
+  """
   request.user.delete()
   return redirect('/logout/')
 
 
 # KURZY stuff general
 def courses(request: HttpRequest) -> HttpResponse:
+    """
+    Overview of all courses
+    """
     user_kind = get_user_kind(request)
     registered_courses = []
     garanting = []
@@ -60,6 +76,7 @@ def courses(request: HttpRequest) -> HttpResponse:
     not_registered = (Course.objects.
                       select_related().
                       annotate(count=Count('student')))
+    # Actions Done only if user is authorized
     if user_kind["user"]:
         # try to extract user courses
         registered_courses = (Course.objects.
@@ -67,7 +84,7 @@ def courses(request: HttpRequest) -> HttpResponse:
                               annotate(count=Count('student')).
                               filter(student__UserUID__exact=request.user.id).
                               all())
-
+        # extract all courses that user is garant of
         garanting = not_registered.filter(garant__UserUID__exact=request.user.id).all().annotate(
           confirmed=Subquery(
             Garant.objects.filter(
@@ -75,8 +92,8 @@ def courses(request: HttpRequest) -> HttpResponse:
               CourseUID__exact=OuterRef("UID")
             ).values('confirmed')
           ))
-        print(garanting.all())
 
+        # extract all courses that user is teacher of
         teaching = not_registered.filter(teacher__UserUID__exact=request.user.id).all().annotate(
           confirmed=Subquery(
             Garant.objects.filter(
@@ -85,6 +102,7 @@ def courses(request: HttpRequest) -> HttpResponse:
             ).values('confirmed')
           ))
 
+        # extract all courses that user isn't garant of, teacher of, registred in + it has to be allowed course by admin
         not_registered = (not_registered.
                           exclude(student__UserUID__exact=request.user.id).
                           exclude(garant__UserUID__exact=request.user.id).
@@ -104,6 +122,9 @@ def courses(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def courses_create(request: HttpRequest) -> HttpResponse:
+    """
+    Create course view + save
+    """
     if request.method == 'POST':
         form = CreateCourseForm(request.POST)
         if form.is_valid():
@@ -123,12 +144,15 @@ def courses_create(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def courses_delete(request, course_uid):
+def courses_delete(request: HttpRequest, course_uid: str) -> HttpResponse:
+    """
+    Deleting course action
+    """
     is_garant = (Garant.objects.
                  filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id).
                  filter(confirmed=True).
                  first())
-    if request.user.is_staff or (is_garant):
+    if request.user.is_staff or is_garant:
         _course = Course.objects.get(Q(UID=course_uid))
         _course.delete()
     return redirect('/courses/')
@@ -136,6 +160,9 @@ def courses_delete(request, course_uid):
 
 @login_required
 def my_courses(request: HttpRequest) -> HttpResponse:
+  """
+  View of currently logged in users courses
+  """
   user_kind = get_user_kind(request)
 
   registered_courses = (Student.objects.
@@ -146,12 +173,16 @@ def my_courses(request: HttpRequest) -> HttpResponse:
 
 
 def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
+    """
+    View for courses detail, it also pulls extra data based on user kind
+    """
     course_query_res = Course.objects.filter(UID__exact=course_uid).all()
 
     if not len(course_query_res):
         return redirect("/courses/")
     if request.POST.get("add"):
-        return redirect("/courses/create_termin/" + course_uid)
+        return redirect("/courses/create_term_view/" + course_uid)
+    # check for users relation to the course
     is_course_student = (Student.objects.
                          filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id))
     is_garant = (Garant.objects.
@@ -159,7 +190,7 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
                  filter(confirmed=True).
                  first())
 
-    period_terms = (TerminPeriod.objects.
+    period_terms = (TerminPeriodic.objects.
                     select_related('TerminID').
                     filter(TerminID__CourseUID__exact=course_uid))
 
@@ -174,6 +205,7 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
 
+    # annotate would be better, or for in for, but no time nor IQ points
     for a in exam_list:
       a.body = get_body_termin(a.TerminID, request.user.id)
     for a in project_list:
@@ -199,6 +231,9 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
 
 @login_required
 def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
+    """
+    Action for user joining into course, Course must have space, and user can't already be in it nor be its teacher/garant
+    """
     # Check if course exists and if student limit allows new students
     try:
         _course = Course.objects.get(Q(UID=course_uid))
@@ -226,7 +261,10 @@ def courses_join(request: HttpRequest, course_uid) -> HttpResponse:
 
 
 @login_required
-def courses_leave(request: HttpRequest, course_uid) -> HttpResponse:
+def courses_leave(request: HttpRequest, course_uid: str) -> HttpResponse:
+    """
+    Action for course leaving
+    """
     try:
         _course = Course.objects.get(Q(UID=course_uid))
         _student = (Student.objects.
@@ -240,11 +278,15 @@ def courses_leave(request: HttpRequest, course_uid) -> HttpResponse:
 
     return redirect('/courses/')
 
+
 ###
 # Termin stuff
 ###
 @login_required
-def termins(request: HttpRequest) -> HttpResponse:
+def terms_view(request: HttpRequest) -> HttpResponse:
+    """
+    View to list all possible term
+    """
     # get registered courses
     user_kind = get_user_kind(request)
     registered_courses = []
@@ -254,12 +296,13 @@ def termins(request: HttpRequest) -> HttpResponse:
                               select_related('CourseUID').
                               filter(UserUID__exact=request.user.id).
                               all())
-    return render(request, "WIS2_app/courses/course_termins.html", {'user': True,
+    return render(request, "WIS2_app/courses/templates/WIS2_app/user/course_termins.html", {**user_kind,
                                                                     'course_list': registered_courses})
 
 
 @login_required
-def create_termin(request: HttpRequest, termin_type: str, course_uid: str):
+def create_term_view(request: HttpRequest, termin_type: str, course_uid: str):
+  """Create term view + action"""
   user_kind = get_user_kind(request)
   termin_type2form = {'lecture': CreateLectureForm,
                       'practice_lecture': CreatePracticeLectureForm,
@@ -281,13 +324,14 @@ def create_termin(request: HttpRequest, termin_type: str, course_uid: str):
   except django.core.exceptions.ObjectDoesNotExist:
     return redirect('/courses/')
 
-  return render(request, "WIS2_app/user/create_termin.html", {'form': form,
+  return render(request, "WIS2_app/user/lector/garant/create_term.html", {'form': form,
                                                               'course_name': course.name,
                                                               'termin_type': termin_type2cz[termin_type],
-                                                              **user_kind})
+                                                                          **user_kind})
 
 
-def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> HttpResponse:
+def delete_ter(request: HttpRequest, course_uid: str, termin_uid: str) -> HttpResponse:
+  """delete term action"""
   try:
     _ = Course.objects.get(UID__exact=course_uid)
     termin = Termin.objects.get(ID__exact=termin_uid)
@@ -301,15 +345,20 @@ def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> Htt
 ###
 ### TOTO JE NA HODNOTENIE postupne presmerovava ako klikas buttons najrpv z kurzov potom na terminy a studentov
 ###
-def evaluation(request: HttpRequest) -> HttpResponse:
+def evaluations_courses_view(request: HttpRequest) -> HttpResponse:
+    """
+    View in which teacher can choose in which class he wants to give points to students
+    """
     courses = Course.objects.select_related().filter(teacher__UserUID__exact=request.user.id).all()
 
-    return render(request, "WIS2_app/user/evaluation_course.html", {'course_list': courses, **get_user_kind(request)})
+    return render(request, "WIS2_app/user/lector/evaluation_course.html", {'course_list': courses, **get_user_kind(request)})
 
 
-def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
-
-    period_terms = (TerminPeriod.objects.
+def evaluation_term(request: HttpRequest, course_uid: str) -> HttpResponse:
+    """
+    View in which teacher can decide which term to grade
+    """
+    period_terms = (TerminPeriodic.objects.
                     select_related('TerminID').
                     filter(TerminID__CourseUID__exact=course_uid))
 
@@ -322,7 +371,7 @@ def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
     project_list = single_terms.filter(kind__exact="PRJ").all()
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
-    return render(request, "WIS2_app/user/evaluation_termin.html",
+    return render(request, "WIS2_app/user/lector/evaluation_termin.html",
                   {'course': course_uid,
                    'exam_list': exam_list,
                    'project_list': project_list,
@@ -331,14 +380,21 @@ def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
                    **get_user_kind(request)})
 
 
-def evaluation_student(request: HttpRequest, course_uid, termin_uid) -> HttpResponse:
+def evaluation_student(request: HttpRequest, course_uid: str, termin_uid: str) -> HttpResponse:
+    """
+    View in which teacher picks students to grade
+    """
     student_list = Course.objects.get(UID__exact = course_uid).student_set.all()
     termin2body_list = Termin.objects.get(ID__exact = termin_uid).termin2body_set.all()
-    return render(request, "WIS2_app/user/evaluation_student.html", {'student_list': student_list,
+    return render(request, "WIS2_app/user/lector/evaluation_student.html", {'student_list': student_list,
                                                                      'termin_uid': termin2body_list,
-                                                                     **get_user_kind(request)})
+                                                                            **get_user_kind(request)})
 
-def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_uid) -> HttpResponse:
+
+def evaluation_student_body(request: HttpRequest, course_uid: str, termin_uid: str, user_uid: str) -> HttpResponse:
+  """
+  View for point addition to given student in given term and course
+  """
   _termin = Termin.objects.get(ID__exact=termin_uid)
   if request.method == 'POST':
     form = CreateTermin2Body(_termin.max_points, request.POST)
@@ -348,5 +404,5 @@ def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_u
   else:
     form = CreateTermin2Body(_termin.max_points)
 
-  return render(request, 'WIS2_app/user/add_body_student.html', {'form': form, **get_user_kind(request)})
+  return render(request, 'WIS2_app/user/lector/add_body_student.html', {'form': form, **get_user_kind(request)})
 

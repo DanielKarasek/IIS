@@ -1,7 +1,7 @@
 from typing import Dict
+
 from django.http.request import HttpRequest
-from django.db.models import Q, Count
-import django.core.exceptions
+
 from .models import *
 
 
@@ -29,15 +29,15 @@ def get_user_kind(request: HttpRequest) -> Dict[str, bool]:
     return user_kind_dict
 
 
-def get_body_termin(TerminUID, StudentUID):
+def get_body_termin(TerminUID: str, UserUID: int) -> int:
 
-    _termin2body = Termin2Body.objects.select_related().filter(StudentUID__UserUID__exact=StudentUID,
+    _termin2body = Term2Points.objects.select_related().filter(StudentUID__UserUID__exact=UserUID,
                                                                TerminUID__exact=TerminUID).first()
 
     return _termin2body.points_given if _termin2body else 0
 
 
-def get_body_course(CourseUID, UserUID):
+def get_body_course(CourseUID: str, UserUID: int) -> int:
     body = 0
 
     _termins = Termin.objects.filter(CourseUID=CourseUID).all()

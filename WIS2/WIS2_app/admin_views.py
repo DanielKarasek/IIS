@@ -1,16 +1,24 @@
-from django.http.request import HttpRequest
-from django.shortcuts import render, redirect
+
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from .models import *
-from .helper_functions import get_user_kind
-from .forms import CreateRoomForm
 import django.core.exceptions
-from .models import Course, Garant
+from django.db.models import Q
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
+from django.shortcuts import render, redirect
+
+import http.client
+
+from .forms import CreateRoomForm
+from .helper_functions import get_user_kind
+from .models import *
+from .models import Garant
 
 
 @login_required
-def room(request: HttpRequest):
+def manage_room_view(request: HttpRequest) -> HttpResponse:
+    """
+    Create/delete view for admin
+    """
     if request.method == 'POST':
         form = CreateRoomForm(request.POST)
         if form.is_valid():
@@ -27,18 +35,10 @@ def room(request: HttpRequest):
 
 
 @login_required
-def room_delete(request: HttpRequest, room_uid):
-    if request.user.is_staff:
-        try:
-            rooms = Room.objects.get(roomUID=room_uid)
-            rooms.delete()
-        except django.core.exceptions.ObjectDoesNotExist:
-            pass
-    return redirect('/admin/rooms/')
-
-
-@login_required
-def garants(request: HttpRequest):
+def garant_managment_view(request: HttpRequest) -> HttpResponse:
+    """
+    View for garant managment (allowing/disallowing courses)
+    """
     try:
         garants_confirmed = Garant.objects.filter(confirmed=True).all()
     except django.core.exceptions.ObjectDoesNotExist:
@@ -54,7 +54,10 @@ def garants(request: HttpRequest):
 
 
 @login_required
-def garants_change_confirmed(request: HttpRequest, course_uid):
+def garants_change_confirmed(request: HttpRequest, course_uid: str) -> http.client.responses:
+    """
+    Action when allow/disallow is clicked for any course in garant_managment_view.py
+    """
     if request.user.is_staff:
         try:
             _garant = Garant.objects.get(Q(CourseUID=course_uid))
@@ -63,3 +66,18 @@ def garants_change_confirmed(request: HttpRequest, course_uid):
         except django.core.exceptions.ObjectDoesNotExist:
             pass
     return redirect('/admin/garants/')
+
+
+
+@login_required
+def room_delete(request: HttpRequest, room_uid: str) -> HttpResponse:
+    """
+    Action on delete room button pressed
+    """
+    if request.user.is_staff:
+        try:
+            rooms = Room.objects.get(roomUID=room_uid)
+            rooms.delete()
+        except django.core.exceptions.ObjectDoesNotExist:
+            pass
+    return redirect('/admin/rooms/')

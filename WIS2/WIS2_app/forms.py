@@ -1,8 +1,13 @@
-from django import forms
-from .models import *
-from .validators import validate_is_positive
 from datetime import datetime
 
+from django import forms
+from django.http.request import HttpRequest
+
+from .models import *
+from .validators import validate_is_positive
+
+
+# These are used because the code is in different language than target audience language
 LANGUAGES = [('ENG', 'Angličtina'),
              ('CZE', 'Čeština'),
              ('GER', 'Němčina')]
@@ -26,6 +31,9 @@ TERMIN_TYPE =[
 
 
 class CreateCourseForm(forms.Form):
+    """
+    This class generates forms for course creation
+    """
     uid = forms.CharField(label="* Zkratka:", max_length=5, required=True)
     name = forms.CharField(label="* Celý název:", max_length=40, required=True)
 
@@ -43,7 +51,7 @@ class CreateCourseForm(forms.Form):
     desc = forms.CharField(label="* Popis:", required=True,
                            widget=forms.Textarea)
 
-    def save(self, user):
+    def save(self, user: User):
         course = Course()
         course.UID = self.cleaned_data['uid']
         course.name = self.cleaned_data['name']
@@ -66,16 +74,21 @@ class CreateCourseForm(forms.Form):
 
 
 class CreateRoomForm(forms.Form):
+    """
+    This class generates forms for room creation
+    """
     uid = forms.CharField(label="* Jméno místnosti:", max_length=10, required=True)
 
     def save(self):
-        print("got here")
         room = Room()
         room.roomUID = self.cleaned_data['uid']
         room.save()
 
 
 class GeneralTermForm(forms.Form):
+  """
+  This class generates forms for general term creation
+  """
   name = forms.CharField(label="* Jméno:", required=True)
   room = forms.ModelChoiceField(label="* Místnost:", queryset=Room.objects.all(), required=True)
   points = forms.IntegerField(label="* Maximum bodů:", required=True, min_value=0)
@@ -83,7 +96,7 @@ class GeneralTermForm(forms.Form):
                          widget=forms.Textarea)
   kind_perxsingle = None
 
-  def save(self, course_uid):
+  def save(self, course_uid: str) -> Termin:
     termin = Termin()
     termin.CourseUID = Course.objects.get(UID__exact=course_uid)
     termin.name = self.cleaned_data['name']
@@ -97,6 +110,9 @@ class GeneralTermForm(forms.Form):
 
 
 class CreatePeriodicForm(GeneralTermForm):
+  """
+  This class generates forms for general periodic term creation
+  """
   repeats = forms.IntegerField(label="* Celkem opakování:", required=False, min_value=0)
   periodicity = forms.IntegerField(label="* Perioda opakování v týdnech:", required=False, min_value=0)
   date = forms.DateField(label="First date", widget=forms.DateInput(attrs={'type': 'date'}, format="%Y-%m-%d"),
@@ -107,10 +123,10 @@ class CreatePeriodicForm(GeneralTermForm):
   kind_perxsingle = 'PER'
   kind_plecxlec = None
 
-  def save(self, course_uid):
+  def save(self, course_uid: str) -> None:
     termin = super().save(course_uid)
 
-    terminperiodic = TerminPeriod()
+    terminperiodic = TerminPeriodic()
     terminperiodic.kind = self.kind_plecxlec
     terminperiodic.TerminID = Termin.objects.get(ID__exact=termin.ID)
     terminperiodic.start = datetime.combine(self.cleaned_data['date'], self.cleaned_data['time'])
@@ -120,14 +136,24 @@ class CreatePeriodicForm(GeneralTermForm):
 
 
 class CreateLectureForm(CreatePeriodicForm):
+  """
+  This class generates forms for lecture creation
+  """
+
   kind_plecxlec = 'LEC'
 
 
 class CreatePracticeLectureForm(CreatePeriodicForm):
+  """
+  This class generates forms for practice lecture creation
+  """
   kind_plecxlec = 'PLEC'
 
 
 class CreateOneShotTerm(GeneralTermForm):
+  """
+  This class generates forms for general one shot term
+  """
   date = forms.DateField(label="First date", widget=forms.DateInput(attrs={'type': 'date'}, format="%Y-%m-%d"),
                          required=True)
 
@@ -136,7 +162,7 @@ class CreateOneShotTerm(GeneralTermForm):
   kind_perxsingle = 'ONE'
   kind_exmxproj = None
 
-  def save(self, course_uid):
+  def save(self, course_uid: str) -> None:
     termin = super().save(course_uid)
     terminsingle = TerminSingle()
     terminsingle.TerminID = Termin.objects.get(ID__exact=termin.ID)
@@ -146,25 +172,34 @@ class CreateOneShotTerm(GeneralTermForm):
 
 
 class CreateProjectForm(CreateOneShotTerm):
+    """
+    This class generates forms for projects
+    """
     kind_exmxproj = "PRJ"
 
 
 class CreateExamForm(CreateOneShotTerm):
+    """
+    This class generates forms exams
+    """
     kind_exmxproj = "EXM"
 
 
 class CreateTermin2Body(forms.Form):
-  body = forms.IntegerField(label="Toto jen dummy at mame spravne poradi po init")
+  """
+  This class generates forms termin2points table
+  """
+  body = forms.IntegerField(label="DUMMY overriden in init")
   body_extra = forms.IntegerField(label="Body extra:", required=False)
 
-  def __init__(self, max_body=30, *args, **kwargs):
+  def __init__(self, max_body: int = 30, *args, **kwargs):
     super().__init__(*args, *kwargs)
     print(self.__dict__)
     self.fields['body'] = forms.IntegerField(label="* Body:", min_value=0, max_value=max_body, required=True)
 
-  def save(self, request, course_uid, termin_uid, user_uid):
-    terminbody = Termin2Body()
-    already_exists = Termin2Body.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
+  def save(self, request: HttpRequest, course_uid: str, termin_uid: str, user_uid: str) -> None:
+    terminbody = Term2Points()
+    already_exists = Term2Points.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
                                                 StudentUID__exact=Student.objects.get(
                                                   UserUID__exact=User.objects.get(username__exact=user_uid).id,
                                                   CourseUID__exact=course_uid)).first()

@@ -7,9 +7,9 @@ urlpatterns = [
   path('', views.index, name="index"),
   path('index/', views.index, name="index"),
   #ADMIN----------------------------------------------------------------
-  path('admin/rooms/', admin_views.room),
+  path('admin/rooms/', admin_views.manage_room_view),
   path('admin/rooms/delete/<slug:room_uid>/', admin_views.room_delete),
-  path('admin/garants/', admin_views.garants),
+  path('admin/garants/', admin_views.garant_managment_view),
   path('admin/garants/<slug:course_uid>/', admin_views.garants_change_confirmed),
   #USER-----------------------------------------------------------------
   path('user/', views.user, name="user"),
@@ -25,19 +25,19 @@ urlpatterns = [
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   path('my_courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------
-  path('student_evaluation/', views.evaluation, name="hodnoceni"),
-  path('student_evaluation/<slug:course_uid>/', views.evaluation_termin, name="hodnoceni_studentu"),
+  path('student_evaluation/', views.evaluations_courses_view, name="hodnoceni"),
+  path('student_evaluation/<slug:course_uid>/', views.evaluation_term, name="hodnoceni_studentu"),
   path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/', views.evaluation_student, name="hodnoceni_studentu"),
   path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/<slug:user_uid>/', views.evaluation_student_body, name="zadavanie_bodov"),
-  path('courses/termins/<slug:course_uid>/', views.termins, name="termins"),
-  path('courses/create_<slug:termin_type>/<slug:course_uid>/', views.create_termin),
-  path('courses/termins/<slug:course_uid>/delete/<slug:termin_uid>/', views.delete_termin, name="delete_termin"),
+  path('courses/terms_view/<slug:course_uid>/', views.terms_view, name="terms_view"),
+  path('courses/create_<slug:termin_type>/<slug:course_uid>/', views.create_term_view),
+  path('courses/terms_view/<slug:course_uid>/delete/<slug:termin_uid>/', views.delete_ter, name="delete_ter"),
 
-  #path('coures/termins/<slug:course_uid>/', ),
-  #path('courses/termins/<slug:course_uid>/detail/<slug:termin_uid>/', ),
-  #path('courses/termins/<slug:course_uid>/body/<slug:termin_uid>/', ),
+  #path('coures/terms_view/<slug:course_uid>/', ),
+  #path('courses/terms_view/<slug:course_uid>/detail/<slug:termin_uid>/', ),
+  #path('courses/terms_view/<slug:course_uid>/body/<slug:termin_uid>/', ),
 
-  #path('courses/termins/<slug:course_uid>/new/', ),
+  #path('courses/terms_view/<slug:course_uid>/new/', ),
 ]
 
 

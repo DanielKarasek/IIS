@@ -1,8 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 import uuid
-
-# Create your models here.
 
 
 class Course(models.Model):
@@ -39,7 +37,6 @@ class Course(models.Model):
 ### Vztazne pro typy userov
 # Udelat jen foreign key v course + confirmed
 class Garant(models.Model):
-    # cascade??
     UserUID = models.ForeignKey(User, on_delete=models.CASCADE)
     CourseUID = models.ForeignKey(Course, on_delete=models.CASCADE)
     confirmed = models.BooleanField(default=False)
@@ -100,7 +97,8 @@ class Termin(models.Model):
 
 
 # specializuju at nemusime mit ruzne vztazne pro period a single terminy
-class TerminPeriod(models.Model):
+class TerminPeriodic(models.Model):
+    """Specialized kind of term which occurs periodically"""
     TerminID = models.OneToOneField(Termin, on_delete=models.CASCADE, primary_key=True)
 
     class Kind(models.TextChoices):
@@ -116,6 +114,7 @@ class TerminPeriod(models.Model):
 
 
 class TerminSingle(models.Model):
+    """Specialized kind of term which occurs just once"""
     TerminID = models.OneToOneField(Termin, on_delete=models.CASCADE, primary_key=True)
 
     class Kind(models.TextChoices):
