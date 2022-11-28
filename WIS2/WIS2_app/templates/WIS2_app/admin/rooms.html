@@ -5,27 +5,30 @@
 {% if user.is_staff %}
 
 {% block content %}
-    <table>
-        <tr>
-            <td>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form }}
-                    <button type="submit">Pridat mistnost</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <th>Cislo mistnosti</th>
-            <th>Vymazat mistnost</th>
-        </tr>
+    <h2>Existující místnosti</h2>
+    <table class="table w-25 p-3 table-light">
+        <thead class="table-dark">
+            <tr>
+                <th>Číslo místnosti</th>
+                <th>Vymazat místnost</th>
+            </tr>
+        </thead>
+        <tbody>
         {%  for room in rooms %}
         <tr>
             <td> {{ room.roomUID }}</td>
             <td> <a href="delete/{{ room.roomUID }}/">Vymazat</a></td>
         </tr>
         {% endfor %}
+        </tbody>
     </table>
+    <h2>Nová místnost</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Přidat místnost</button>
+    </form>
+
 {% endblock %}
 
 {% else %}

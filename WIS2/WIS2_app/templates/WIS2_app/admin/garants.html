@@ -2,38 +2,45 @@
 {% extends 'WIS2_app/base.html' %}
 {% if user.is_staff %}
 {% block content %}
-    <table>
+    <h2>Čeká na verifikaci</h2>
+    <table class="table w-25 p-3 table-light">
+        <thead class="table-dark">
         <tr>
-            <th>Ceka na verifikaci</th>
-        </tr>
-        <tr>
-            <th>Predmet</th>
+            <th>Předmět</th>
             <th>Garant</th>
-            <th>Schvalit</th>
+            <th>Schválit</th>
+            <th>Smazat</th>
         </tr>
+        </thead>
+        <tbody>
         {% for item in garants_waiting %}
             <tr>
                 <td><a href="/courses/detail/{{ item.CourseUID.UID }}/">{{ item.CourseUID }}</a></td>
                 <td>{{ item.UserUID }}</td>
-                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Schvalit</a></td>
-                <td><a href="/courses/delete/{{ item.CourseUID.UID }}/">Smazat predmet</a></td>
+                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Schválit</a></td>
+                <td><a href="/courses/delete/{{ item.CourseUID.UID }}/">Smazat předmět</a></td>
             </tr>
         {%  endfor %}
-            <tr>
-            <th>Schvalene kurzy</th>
-        </tr>
+        </tbody>
+    </table>
+    <h2>Schválené kurzy</h2>
+    <table class="table w-25 p-3 table-light">
+        <thead class="table-dark">
         <tr>
-            <th>Predmet</th>
+            <th>Předmět</th>
             <th>Garant</th>
-            <th>Schvalit</th>
+            <th>Schválit</th>
         </tr>
+        </thead>
+        <tbody>
         {% for item in garants_verified %}
             <tr>
                 <td><a href="/courses/detail/{{ item.CourseUID.UID }}/">{{ item.CourseUID }}</a></td>
                 <td>{{ item.UserUID }}</td>
-                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Odschvalit</a></td>
+                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Odschválit</a></td>
             </tr>
         {%  endfor %}
+        </tbody>
     </table>
 
 {% endblock %}
