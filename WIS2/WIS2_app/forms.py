@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from .validators import validate_is_positive
+from datetime import datetime
 
 LANGUAGES = [('ENG', 'Angličtina'),
              ('CZE', 'Čeština'),
@@ -98,18 +99,21 @@ class GeneralTermForm(forms.Form):
 class CreatePeriodicForm(GeneralTermForm):
   repeats = forms.IntegerField(label="* Celkem opakování:", required=False, min_value=0)
   periodicity = forms.IntegerField(label="* Perioda opakování v týdnech:", required=False, min_value=0)
-  date = forms.DateTimeField(label="* První termín:", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M",
-                             required=True)
+  date = forms.DateField(label="First date", widget=forms.DateInput(attrs={'type': 'date'}, format="%Y-%m-%d"),
+                         required=True)
 
+  time = forms.TimeField(label="First time", widget=forms.TimeInput(attrs={'type': 'time'}, format="%H:%M"),
+                         required=True)
   kind_perxsingle = 'PER'
   kind_plecxlec = None
 
   def save(self, course_uid):
     termin = super().save(course_uid)
+
     terminperiodic = TerminPeriod()
     terminperiodic.kind = self.kind_plecxlec
     terminperiodic.TerminID = Termin.objects.get(ID__exact=termin.ID)
-    terminperiodic.start = self.cleaned_data['date']
+    terminperiodic.start = datetime.combine(self.cleaned_data['date'], self.cleaned_data['time'])
     terminperiodic.repeats = self.cleaned_data['repeats']
     terminperiodic.periodicity = self.cleaned_data['periodicity']
     terminperiodic.save()
@@ -124,7 +128,11 @@ class CreatePracticeLectureForm(CreatePeriodicForm):
 
 
 class CreateOneShotTerm(GeneralTermForm):
-  date = forms.DateTimeField(label="* datum", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M", required=True)
+  date = forms.DateField(label="First date", widget=forms.DateInput(attrs={'type': 'date'}, format="%Y-%m-%d"),
+                         required=True)
+
+  time = forms.TimeField(label="First time", widget=forms.TimeInput(attrs={'type': 'time'}, format="%H:%M"),
+                         required=True)
   kind_perxsingle = 'ONE'
   kind_exmxproj = None
 
@@ -133,7 +141,7 @@ class CreateOneShotTerm(GeneralTermForm):
     terminsingle = TerminSingle()
     terminsingle.TerminID = Termin.objects.get(ID__exact=termin.ID)
     terminsingle.kind = self.kind_exmxproj
-    terminsingle.date = self.cleaned_data['date']
+    terminsingle.date = datetime.combine(self.cleaned_data['date'],self.cleaned_data['time'])
     terminsingle.save()
 
 

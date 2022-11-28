@@ -73,7 +73,7 @@ def courses(request: HttpRequest) -> HttpResponse:
                           exclude(garant__UserUID__exact=request.user.id).
                           exclude(teacher__UserUID__exact=request.user.id).
                           exclude(garant__confirmed__isnull=True).
-                          exclude(garant__confirmed=True))
+                          exclude(garant__confirmed=False))
 
     not_registered = not_registered.all()
 
@@ -284,7 +284,7 @@ def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> Htt
 def evaluation(request: HttpRequest) -> HttpResponse:
     courses = Course.objects.select_related().filter(teacher__UserUID__exact=request.user.id).all()
 
-    return render(request, "WIS2_app/user/evaluation_course.html", {'course_list': courses})
+    return render(request, "WIS2_app/user/evaluation_course.html", {'course_list': courses, **get_user_kind(request)})
 
 
 def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
@@ -307,14 +307,16 @@ def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
                    'exam_list': exam_list,
                    'project_list': project_list,
                    'lecture_list': lecture_list,
-                   'practice_lecture_list': practice_lecture_list})
+                   'practice_lecture_list': practice_lecture_list,
+                   **get_user_kind(request)})
 
 
 def evaluation_student(request: HttpRequest, course_uid, termin_uid) -> HttpResponse:
     student_list = Course.objects.get(UID__exact = course_uid).student_set.all()
     termin2body_list = Termin.objects.get(ID__exact = termin_uid).termin2body_set.all()
     return render(request, "WIS2_app/user/evaluation_student.html", {'student_list': student_list,
-                                                                     'termin_uid': termin2body_list})
+                                                                     'termin_uid': termin2body_list,
+                                                                     **get_user_kind(request)})
 
 def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_uid) -> HttpResponse:
   _termin = Termin.objects.get(ID__exact=termin_uid)
@@ -326,5 +328,5 @@ def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_u
   else:
     form = CreateTermin2Body(_termin.max_points)
 
-  return render(request, 'WIS2_app/user/add_body_student.html', {'form': form})
+  return render(request, 'WIS2_app/user/add_body_student.html', {'form': form, **get_user_kind(request)})
 

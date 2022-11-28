@@ -4,26 +4,31 @@
 {% block content %}
     <h1>Hodnocení studentů</h1>
     <h2>Vaše vyučované předměty</h2>
-    <table>
-            <tr>
-                <th>Zkratka</th>
-                <th>Jméno</th>
-                <th>Kredity</th>
-                <th>Limit studentů</th>
-                <th>Jazyk</th>
-                <th>Typ</th>
-            </tr>
+    <table class="w-50 p-3 table table-light">
+            <thead class="table-dark">
+                <tr>
+                    <th>Zkratka</th>
+                    <th>Jméno</th>
+                    <th>Kredity</th>
+                    <th>Limit studentů</th>
+                    <th>Jazyk</th>
+                    <th>Typ</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for item in course_list%}
-            <tr>
-                <td>{{item.UID}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.credits}}</td>
-                <td>{{item.student_set.count }}/{{item.student_limit}}</td>
-                <td>{{item.language}}</td>
-                <td>{{item.kind}}</td>
-                <td><a href="{{ item.UID }}"><button>Termíny</button></a></td>
-            </tr>
+
+                <tr>
+                    <td>{{item.UID}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.credits}}</td>
+                    <td>{{item.student_set.count }}/{{item.student_limit}}</td>
+                    <td>{{item.language}}</td>
+                    <td>{{item.kind}}</td>
+                    <td><a href="{{ item.UID }}"><button>Termíny</button></a></td>
+                </tr>
             {% endfor %}
+            <tbody>
     </table>
 
 {% endblock %}

@@ -4,13 +4,16 @@
 {% block content %}
     <h1> {{course}} - Terminy</h1>
     <h2>Testy</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
+    <table class="w-50 p-3 table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <td>Název</td>
+                <td>Datum</td>
+                <td>Místnost</td>
+                <td>Body</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for exam in exam_list %}
             <tr>
                 <td>{{ exam.TerminID.name }}</td>
@@ -23,17 +26,23 @@
                     </a>
                 </td>
             </tr>
+
         {% endfor %}
+        </tbody>
     </table>
 
     <h2>Projekty</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Deadline</td>
-            <td>Body</td>
-        </tr>
+    <table class="w-50 p-3 table table-light">
+        <thead class="table-dark">
+            <tr>
+                <td>Název</td>
+                <td>Deadline</td>
+                <td>Body</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for project in project_list %}
+
             <tr>
                 <td>{{ project.TerminID.name }}</td>
                 <td>{{ project.date }}</td>
@@ -45,18 +54,23 @@
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 
     <h2>Cvičení</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Perioda opakování</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
+    <table class="w-50 p-3 table table-light">
+        <thead class="table-dark">
+            <tr>
+                <td>Název</td>
+                <td>Datum</td>
+                <td>Perioda opakování</td>
+                <td>Místnost</td>
+                <td>Body</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for practice_lecture in practice_lecture_list %}
+
               <tr>
                   <td>{{ practice_lecture.TerminID.name }}</td>
                   <td>{{ practice_lecture.start }}</td>
@@ -70,31 +84,37 @@
                   </td>
               </tr>
         {% endfor %}
+        <tbody>
     </table>
 
     <h2>Přednášky</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Perioda opakování</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
+    <table class="w-50 p-3 table table-light">
+        <thead class="table-dark">
+            <tr>
+                <td>Název</td>
+                <td>Datum</td>
+                <td>Perioda opakování</td>
+                <td>Místnost</td>
+                <td>Body</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for lecture in lecture_list %}
-              <tr>
-                  <td>{{ lecture.TerminID.name }}</td>
-                  <td>{{ lecture.start }}</td>
-                  <td>{{ lecture.periodicity }}</td>
-                  <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
-                  <td>{{ lecture.TerminID.max_points }}</td>
-                  <td>
-                      <a href="{{ lecture.TerminID.ID }}">
-                          <button> Studenti </button>
-                      </a>
-                  </td>
+            <tr>
+                <td>{{ lecture.TerminID.name }}</td>
+                <td>{{ lecture.start }}</td>
+                <td>{{ lecture.periodicity }}</td>
+                <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
+                <td>{{ lecture.TerminID.max_points }}</td>
+                <td>
+                  <a href="{{ lecture.TerminID.ID }}">
+                      <button> Studenti </button>
+                  </a>
+                </td>
               </tr>
+
         {% endfor %}
+        </tbody>
     </table>
 
 {% endblock %}
