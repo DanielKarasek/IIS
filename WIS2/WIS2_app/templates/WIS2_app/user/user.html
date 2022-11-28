@@ -1,10 +1,15 @@
 {% extends 'WIS2_app/base.html' %}
-
+{% block extra_style %}
+ .list-group-hover .list-group-item:hover
+    {
+        background-color: #99ccff;
+    }
+{% endblock %}
 {% block content %}
-    <ul>
-        <a href="/user/change_password/">Změnit heslo</a>
-    </ul>
-    <ul>
-        <a href="/user/delete/">Smazat uživatele</a>
-    </ul>
+
+    <h1>Správa uživatele</h1>
+    <div class="w-25 list-group list-group-hover">
+      <a href="/user/change_password/" class="list-group-item list-group-item-action border-0 ripple">Změnit heslo</a>
+      <a href="/user/delete/" class="list-group-item list-group-item-action border-0 ripple">Smazat uživatele</a>
+    </div>
 {% endblock %}

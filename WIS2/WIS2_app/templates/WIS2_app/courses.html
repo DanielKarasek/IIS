@@ -2,53 +2,131 @@
 
 {% block content %}
     <h1>Seznam kurzů</h1>
-    <table>
-            {% if user %}
-                <tr><th>Moje predmety</th></tr>
-               <tr>
-                    <th>Zkratka</th>
-                    <th>Jméno</th>
-                    <th>kredity</th>
-                    <th>limit studentů</th>
-                    <th>Jazyk</th>
-                    <th>Typ</th>
-                </tr>
-                {% for item in registered_course_list %}
-                <tr>
-                    <th><a href="detail/{{ item.UID }}">{{item.UID}}</a></th>
-                    <th>{{item.name}}</th>
-                    <th>{{item.credits}}</th>
-                    <th>{{ item.count }}/{{item.student_limit}}</th>
-                    <th>{{item.language}}</th>
-                    <th>{{item.kind}}</th>
-                    <th><a href="leave/{{item.UID}}" ><button> odregistrovat </button></a></th>
-                </tr>
+        {% if user %}
+            <h2>Moje předmety</h2>
+            <table class="table w-50 p-3 table table-hover">
+                <thead >
+                   <tr>
+                        <th scope="col">Zkratka</th>
+                        <th scope="col">Jméno</th>
+                        <th scope="col">Kredity</th>
+                        <th scope="col">Limit studentů</th>
+                        <th scope="col">Jazyk</th>
+                        <th scope="col">Typ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in registered_course_list %}
+                    <tr>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.UID}}</td>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.name}}</td>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.credits}}</td>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{ item.count }}/{{item.student_limit}}</td>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
+                        <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
+                        <td scope="row"><a href="leave/{{item.UID}}" ><button> odregistrovat </button></a></td>
+                    </tr>
                     {% endfor %}
-            {% endif %}
-            <tr><th>Vsechny predmety</th></tr>
+                <tbody>
+            </table>
+        {% endif %}
+    <h2>Všechny predmety</h2>
+    <table class="table w-50 p-3 table table-hover">
+        <colgroup>
+            <col class="col-md-4">
+            <col class="col-md-7">
+            <col class="col-md-7">
+            <col class="col-md-7">
+            <col class="col-md-7">
+            <col class="col-md-7">
+        </colgroup>
+        <thead >
             <tr>
-                <th>Zkratka</th>
-                <th>Jméno</th>
-                <th>kredity</th>
-                <th>limit studentů</th>
-                <th>Jazyk</th>
-                <th>Typ</th>
+                <th scope="col">Zkratka</th>
+                <th scope="col">Jméno</th>
+                <th scope="col">Kredity</th>
+                <th scope="col">Limit studentů</th>
+                <th scope="col">Jazyk</th>
+                <th scope="col">Typ</th>
             </tr>
-            {% for item in course_list%}
+        </thead>
+        {% for item in not_registered%}
+        <tbody>
             <tr>
 
-                <th><a href="detail/{{ item.UID }}">{{item.UID}}</a></th>
-                <th>{{item.name}}</th>
-                <th>{{item.credits}}</th>
-                <th>{{ item.count }}/{{item.student_limit}}</th>
-                <th>{{item.language}}</th>
-                <th>{{item.kind}}</th>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.UID}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.name}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.credits}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.count }}/{{item.student_limit}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
                 {% if user %}
-                    <th><a href="join/{{item.UID}}" ><button> registrovat </button></a></th>
+                    <td scope="row"><a href="join/{{item.UID}}" ><button> registrovat </button></a></td>
                 {% endif %}
             </tr>
-            {% endfor %}
+        </tbody>
+        {% endfor %}
     </table>
+    {% if garant %}
+        <h2>Předměty kde jsem garantem </h2>
+
+
+        <table class="table w-50 p-3 table table-hover">
+        <thead>
+                <tr >
+                    <th scope="col">Zkratka</th>
+                    <th scope="col">Jméno</th>
+                    <th scope="col">Kredity</th>
+                    <th scope="col">Limit studentů</th>
+                    <th scope="col">Jazyk</th>
+                    <th scope="col">Typ</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for item in garanting%}
+            <tr>
+
+                <td onclick="location.href='detail/{{ item.UID }}'"  scope="row">{{item.UID}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.name}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.credits}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.count }}/{{item.student_limit}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
+                <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
+            </tr>
+        {% endfor %}
+        <tbody>
+    </table>
+    {% endif %}
+    {% if lecturer %}
+    <h2>Předměty kde jsem učitelem </h2>
+
+        <table class="table w-50 p-3 table table-hover">
+
+            <thead>
+                <tr>
+                    <th scope="col">Zkratka</th>
+                    <th scope="col">Jméno</th>
+                    <th scope="col">Kredity</th>
+                    <th scope="col">Limit studentů</th>
+                    <th scope="col">Jazyk</th>
+                    <th scope="col">Typ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in teaching%}
+                <tr>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{item.UID}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.name}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.credits}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.count }}/{{item.student_limit}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>>
+    </table>
+    {% endif %}
     {% if user %}
     <a href="/create_course/"><BUTTON>Vytvořit kurz</BUTTON></a>
     {% endif %}

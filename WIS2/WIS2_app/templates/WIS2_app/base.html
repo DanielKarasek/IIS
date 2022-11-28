@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
-    <style type="text/css">
-        .topnav{
-            height:50px;
-            width:100%;
-            position:fixed;
-            top:0;
-            left:0;
-            background-color:#111;
-            overflow: hidden;
-            padding-left:20px;
-        }
-        .topnav a{
-            float: left;
-            color: #a0a0a0;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 17px;
-        }
-        .topnav a:hover{
-            color: #ffffff;
-        }
-        .main{
-            margin-top:50px;
-            padding: 10px 0px;
-        }
 
-    </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<style type="text/css">
+    {% block extra_style %}
+    {% endblock %}
+    .topnav{
+        height:50px;
+        width:100%;
+        position:fixed;
+        top:0;
+        left:0;
+        background-color:#111;
+        overflow: hidden;
+        padding-left:20px;
+    }
+    .topnav a{
+        float: left;
+        color: #a0a0a0;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+    .topnav a:hover{
+        color: #ffffff;
+    }
+    .main{
+        margin-top:50px;
+        padding: 10px 20px;
+    }
+
+</style>
     <title>WIS2</title>
 </head>
 <body>
-    <div class="navbar navbar-light bg-dark">
+    <div class="topnav">
         {% block tabs%}
             <!-- historie predmetu -->
             {% if user %}
@@ -70,7 +72,6 @@
         {% endblock %}
     </div>
     <div class="main">
-
         {% block content %}
             Base content
         {% endblock %}

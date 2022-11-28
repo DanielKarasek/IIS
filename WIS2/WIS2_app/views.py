@@ -53,6 +53,8 @@ def user_delete(request: HttpRequest) -> HttpResponse:
 def courses(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
     registered_courses = []
+    garanting = []
+    teaching = []
     not_registered = (Course.objects.
                       select_related().
                       annotate(count=Count('student')))
@@ -64,14 +66,23 @@ def courses(request: HttpRequest) -> HttpResponse:
                               filter(student__UserUID__exact=request.user.id).
                               all())
 
+        garanting = not_registered.filter(garant__UserUID__exact=request.user.id).all()
+        teaching = not_registered.filter(teacher__UserUID__exact=request.user.id).all()
+
         not_registered = (not_registered.
-                          exclude(student__UserUID__exact=request.user.id))
+                          exclude(student__UserUID__exact=request.user.id).
+                          exclude(garant__UserUID__exact=request.user.id).
+                          exclude(teacher__UserUID__exact=request.user.id).
+                          exclude(garant__confirmed__isnull=True).
+                          exclude(garant__confirmed=False))
 
     not_registered = not_registered.all()
 
     # get all existing courses
-    return render(request, "WIS2_app/courses.html", {'course_list': not_registered,
+    return render(request, "WIS2_app/courses.html", {'not_registered': not_registered,
                                                      'registered_course_list': registered_courses,
+                                                     'garanting': garanting,
+                                                     'teaching': teaching,
                                                      **user_kind})
 
 
