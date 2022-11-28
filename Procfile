@@ -1,2 +1,1 @@
-web: cd WIS2/
-web: gunicorn WIS2.wsgi
+web: cd WIS2 && gunicorn WIS2.wsgi
