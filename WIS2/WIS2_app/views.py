@@ -6,7 +6,8 @@ from django.contrib.auth import update_session_auth_hash
 import django.core.exceptions
 from django.db.models import Q, Count
 from .forms import (CreateCourseForm, CreateProjectForm,
-                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm)
+                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm,
+                    CreateTermin2Body)
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind

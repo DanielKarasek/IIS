@@ -76,7 +76,7 @@ class GeneralTermForm(forms.Form):
     termin = Termin()
     termin.CourseUID = Course.objects.get(UID__exact=course_uid)
     termin.name = self.cleaned_data['name']
-    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
+    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'].roomUID)
     termin.max_points = self.cleaned_data['points']
     termin.kind = self.kind_perxsingle
     termin.description = self.cleaned_data['desc']
