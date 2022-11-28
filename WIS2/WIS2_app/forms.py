@@ -132,3 +132,27 @@ class CreateProjectForm(CreateOneShotTerm):
 
 class CreateExamForm(CreateOneShotTerm):
     kind_exmxproj = "EXM"
+
+
+class CreateTermin2Body(forms.Form):
+  body = forms.IntegerField(label="Body:", required=True)
+
+  def save(self, request, course_uid, termin_uid, user_uid):
+    terminbody = Termin2Body()
+    already_exists = Termin2Body.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
+                                                StudentUID__exact=Student.objects.get(
+                                                  UserUID__exact=User.objects.get(username__exact=user_uid).id,
+                                                  CourseUID__exact=course_uid)).first()
+    print(already_exists)
+    if already_exists:
+      already_exists.delete()
+
+    terminbody.TerminUID = Termin.objects.get(ID__exact=termin_uid)
+
+    terminbody.StudentUID = Student.objects.get(UserUID__exact=User.objects.get(username__exact=user_uid).id,
+                                                CourseUID__exact=course_uid)
+    terminbody.TeacherUID = Teacher.objects.get(UserUID__exact=User.objects.get(username__exact=request.user).id,
+                                                CourseUID__exact=course_uid)
+
+    terminbody.points_given = self.cleaned_data['body']
+    terminbody.save()
