@@ -3,20 +3,23 @@
 
 {% block content %}
     <h1>Hodnocení studentů</h1>
-    <table>
-           <tr><th>Vsichni zaregistrovani studenti</th></tr>
+    <h2>Všichni zaregistrovaní studenti</h2>
+    <table class="w-50 p-3 table table-light">
+        <thead class="table-dark">
             <tr>
                 <td>Login</td>
                 <td>Body</td>
             </tr>
-            {% for student in student_list%}
+        </thead>
+        <tbody>
+        {% for student in student_list%}
             <tr>
                 <td>{{student.UserUID}}</td>
                 <td>{%for body in termin_uid%} {%if body.StudentUID == student%} {{body.points_given}} {%endif%}{%endfor%}</td>
                 <th><a href="{{student.UserUID}}"><button>Body</button></a></th>
             </tr>
             {% endfor %}
-
+        </tbody>
     </table>
 
 {% endblock %}
