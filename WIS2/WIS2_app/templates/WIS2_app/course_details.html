@@ -41,7 +41,7 @@
                 <td>{{ exam.TerminID.name }}</td>
                 <td>{{ exam.date }}</td>
                 <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
-                <td>{{ exam.TerminID.max_points }}</td>
+                <td>{% if is_course_student %}{{ exam.body }}/{% endif %}{{ exam.TerminID.max_points }}</td>
                 {% if is_course_garant %}
                     <td>
                         <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
@@ -72,7 +72,7 @@
             <tr>
                 <td>{{ project.TerminID.name }}</td>
                 <td>{{ project.date }}</td>
-                <td>{{ project.TerminID.max_points }}</td>
+                <td>{% if is_course_student %}{{ student.body }}/{% endif %}{{ student.TerminID.max_points }}</td>
                 {% if is_course_garant %}
                     <td>
 
@@ -108,7 +108,7 @@
                       <td>{{ practice_lecture.start }}</td>
                       <td>{{ practice_lecture.periodicity }}</td>
                       <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
-                      <td>{{ practice_lecture.TerminID.max_points }}</td>
+                      <td>{% if is_course_student %}{{ practice_lecture.body }}/{% endif %}{{ practice_lecture.TerminID.max_points }}</td>
                       {% if is_course_garant %}
                           <td>
                               <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
@@ -143,7 +143,7 @@
                       <td>{{ lecture.start }}</td>
                       <td>{{ lecture.periodicity }}</td>
                       <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
-                      <td>{{ lecture.TerminID.max_points }}</td>
+                      <td>{% if is_course_student %}{{ lecture.body }}/{% endif %}{{ lecture.TerminID.max_points }}</td>
                       {% if is_course_garant %}
                           <td>
                               <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">

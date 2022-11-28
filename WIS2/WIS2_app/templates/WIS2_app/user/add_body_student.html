@@ -3,21 +3,12 @@
 
 {% block content %}
     <h1>Zadanie bodov</h1>
-    <table>
-      <tr>
-        <td>
-          <form method="post">
+    <form method="post">
         {%  csrf_token %}
-        {{ form}}
-        <button type="submit" >submit</button>
-      </form>
-        </td>
-
-      </tr>
-
-
-
-    </table>
+        {{ form.as_p}}
+        <p>Pole s '*' je potřebné vyplnit</p>
+        <button type="submit" >Zadat</button>
+    </form>
 
 
 {% endblock %}
