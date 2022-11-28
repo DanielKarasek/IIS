@@ -42,7 +42,7 @@ class CreateCourseForm(forms.Form):
     desc = forms.CharField(label="* Popis:", required=True,
                            widget=forms.Textarea)
 
-    def save(self):
+    def save(self, user):
         course = Course()
         course.UID = self.cleaned_data['uid']
         course.name = self.cleaned_data['name']
@@ -51,7 +51,17 @@ class CreateCourseForm(forms.Form):
         course.student_limit = self.cleaned_data['students']
         course.language = self.cleaned_data['lang']
         course.description = self.cleaned_data['desc']
+
         course.save()
+
+        garant = Garant()
+        garant.CourseUID = Course.objects.get(UID__exact=self.cleaned_data['uid'])
+        garant.UserUID = user
+        garant.save()
+        teacher = Teacher()
+        teacher.CourseUID = Course.objects.get(UID__exact=self.cleaned_data['uid'])
+        teacher.UserUID = user
+        teacher.save()
 
 
 class CreateRoomForm(forms.Form):
@@ -76,11 +86,12 @@ class GeneralTermForm(forms.Form):
     termin = Termin()
     termin.CourseUID = Course.objects.get(UID__exact=course_uid)
     termin.name = self.cleaned_data['name']
-    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
+    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'].roomUID)
     termin.max_points = self.cleaned_data['points']
     termin.kind = self.kind_perxsingle
     termin.description = self.cleaned_data['desc']
     termin.save()
+
     return termin
 
 
@@ -132,3 +143,32 @@ class CreateProjectForm(CreateOneShotTerm):
 
 class CreateExamForm(CreateOneShotTerm):
     kind_exmxproj = "EXM"
+
+
+class CreateTermin2Body(forms.Form):
+  body = forms.IntegerField(label="Toto jen dummy at mame spravne poradi po init")
+  body_extra = forms.IntegerField(label="Body extra:", required=False)
+
+  def __init__(self, max_body=30, *args, **kwargs):
+    super().__init__(*args, *kwargs)
+    print(self.__dict__)
+    self.fields['body'] = forms.IntegerField(label="* Body:", min_value=0, max_value=max_body, required=True)
+
+  def save(self, request, course_uid, termin_uid, user_uid):
+    terminbody = Termin2Body()
+    already_exists = Termin2Body.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
+                                                StudentUID__exact=Student.objects.get(
+                                                  UserUID__exact=User.objects.get(username__exact=user_uid).id,
+                                                  CourseUID__exact=course_uid)).first()
+    if already_exists:
+      already_exists.delete()
+
+    terminbody.TerminUID = Termin.objects.get(ID__exact=termin_uid)
+
+    terminbody.StudentUID = Student.objects.get(UserUID__exact=User.objects.get(username__exact=user_uid).id,
+                                                CourseUID__exact=course_uid)
+    terminbody.TeacherUID = Teacher.objects.get(UserUID__exact=User.objects.get(username__exact=request.user).id,
+                                                CourseUID__exact=course_uid)
+
+    terminbody.points_given = self.cleaned_data['body']
+    terminbody.save()

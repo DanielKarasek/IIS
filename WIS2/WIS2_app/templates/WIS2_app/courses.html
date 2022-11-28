@@ -80,6 +80,7 @@
                     <th scope="col">Limit studentů</th>
                     <th scope="col">Jazyk</th>
                     <th scope="col">Typ</th>
+                    <th scope="col">Potvrzený</th>
             </tr>
         </thead>
 
@@ -93,6 +94,7 @@
                 <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.count }}/{{item.student_limit}}</td>
                 <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
                 <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
+                <td> {% if item.confirmed %} &#9989; {% endif %} {% if not item.confirmed%} &#10060;{% endif %} </td>
             </tr>
         {% endfor %}
         <tbody>
@@ -111,20 +113,22 @@
                     <th scope="col">Limit studentů</th>
                     <th scope="col">Jazyk</th>
                     <th scope="col">Typ</th>
+                    <th scope="col">Potvrzený</th>
             </tr>
         </thead>
         <tbody>
             {% for item in teaching%}
                 <tr>
-                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{item.UID}}</td>
+                    <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.UID}}</td>
                     <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.name}}</td>
                     <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.credits}}</td>
                     <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.count }}/{{item.student_limit}}</td>
                     <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.language}}</td>
                     <td onclick="location.href='detail/{{ item.UID }}'" scope="row">{{item.kind}}</td>
+                    <td> {% if item.confirmed %} &#9989; {% endif %} {% if not item.confirmed%} &#10060;{% endif %} </td>
                 </tr>
             {% endfor %}
-        </tbody>>
+        </tbody>
     </table>
     {% endif %}
     {% if user %}

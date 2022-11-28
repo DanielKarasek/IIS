@@ -6,12 +6,12 @@ from django.contrib.auth import update_session_auth_hash
 import django.core.exceptions
 from django.db.models import Q, Count
 from .forms import (CreateCourseForm, CreateProjectForm,
-                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm)
+                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm,
+                    CreateTermin2Body)
 from .models import *
 from django.http.response import HttpResponse
-from .helper_functions import get_user_kind
+from .helper_functions import get_user_kind, get_body_course, get_body_termin
 import django.contrib.messages as messages
-
 
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
@@ -73,7 +73,7 @@ def courses(request: HttpRequest) -> HttpResponse:
                           exclude(garant__UserUID__exact=request.user.id).
                           exclude(teacher__UserUID__exact=request.user.id).
                           exclude(garant__confirmed__isnull=True).
-                          exclude(garant__confirmed=False))
+                          exclude(garant__confirmed=True))
 
     not_registered = not_registered.all()
 
@@ -96,11 +96,7 @@ def courses_create(request: HttpRequest) -> HttpResponse:
               messages.error(request, "Kurz s tímto názvem nebo zkratkou již existuje")
               return render(request, "WIS2_app/user/create_course.html", {'form': form})
             else:
-              form.save()
-              _garant = Garant()
-              _garant.CourseUID = Course.objects.get(Q(UID=form.cleaned_data['uid']))
-              _garant.UserUID = request.user
-              _garant.save()
+              form.save(request.user)
 
         return redirect("/courses/")
     else:
@@ -118,6 +114,17 @@ def courses_delete(request, course_uid):
         _course = Course.objects.get(Q(UID=course_uid))
         _course.delete()
     return redirect('/courses/')
+
+
+@login_required
+def my_courses(request: HttpRequest) -> HttpResponse:
+  user_kind = get_user_kind(request)
+
+  registered_courses = (Student.objects.
+                        select_related('CourseUID').
+                        filter(UserUID__exact=request.user.id).all())
+  points = [get_body_course(CourseUID=course.CourseUID, UserUID=request.user.id) for course in registered_courses]
+  return render(request, "WIS2_app/user/my_courses.html", {'registered_course_list_points': zip(registered_courses, points), **user_kind})
 
 
 def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
@@ -147,6 +154,16 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     project_list = single_terms.filter(kind__exact="PRJ").all()
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+
+    for a in exam_list:
+      a.body = get_body_termin(a.TerminID, request.user.id)
+    for a in project_list:
+      a.body = get_body_termin(a.TerminID, request.user.id)
+    for a in practice_lecture_list:
+      a.body = get_body_termin(a.TerminID, request.user.id)
+    for a in lecture_list:
+      a.body = get_body_termin(a.TerminID, request.user.id)
+
     return render(request, "WIS2_app/course_details.html",
                   {'course': course,
                    'exam_list': exam_list,
@@ -158,19 +175,6 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
 
 
 # Kurzy interakce s uzivatelem
-@login_required
-def my_courses(request: HttpRequest) -> HttpResponse:
-    user_kind = get_user_kind(request)
-    registered_courses = []
-    if user_kind["user"]:
-        # try to extract user courses
-        registered_courses = (Student.objects.
-                              select_related('CourseUID').
-                              filter(UserUID__exact=request.user.id).
-                              all())
-
-    # get all existing courses
-    return render(request, "WIS2_app/user/my_courses.html", {'registered_course_list': registered_courses, **user_kind})
 
 
 @login_required
@@ -278,17 +282,10 @@ def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> Htt
 ### TOTO JE NA HODNOTENIE postupne presmerovava ako klikas buttons najrpv z kurzov potom na terminy a studentov
 ###
 def evaluation(request: HttpRequest) -> HttpResponse:
-    #get courses where garant or teacher
-    _garant = Garant.objects.filter(UserUID=request.user).filter(confirmed=True).all()
-    _teacher = Teacher.objects.filter(UserUID=request.user).all()
-    All_courses = []
-    if len(_garant):
-        for item in _garant:
-            All_courses.append(Course.objects.get(Q(UID=item.CourseUID.UID)))
-    if len(_teacher):
-        for item in _teacher:
-            All_courses.append(Course.objects.get(Q(UID=item.CourseUID.UID)))
-    return render(request, "WIS2_app/user/student_evaluation.html", {'course_list': All_courses})
+    courses = Course.objects.select_related().filter(teacher__UserUID__exact=request.user.id).all()
+
+    return render(request, "WIS2_app/user/evaluation_course.html", {'course_list': courses})
+
 
 def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
 
@@ -320,15 +317,14 @@ def evaluation_student(request: HttpRequest, course_uid, termin_uid) -> HttpResp
                                                                      'termin_uid': termin2body_list})
 
 def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_uid) -> HttpResponse:
-    #print(TerminSingle.objects.get(TerminID__exact=termin_uid))
-    #print(Termin.objects.get(ID__exact= termin_uid).kind)
-    #print(User.objects.get(username__exact = user_uid).id)
-    if request.method == 'POST':
-        form = CreateTermin2Body(request.POST)
-        if form.is_valid():
-            form.save(request, course_uid, termin_uid, user_uid)
-    else:
-        form = CreateTermin2Body()
+  _termin = Termin.objects.get(ID__exact=termin_uid)
+  if request.method == 'POST':
+    form = CreateTermin2Body(_termin.max_points, request.POST)
+    if form.is_valid():
+      form.save(request, course_uid, termin_uid, user_uid)
+      return redirect(f"/student_evaluation/{course_uid}/{termin_uid}/")
+  else:
+    form = CreateTermin2Body(_termin.max_points)
 
-    return render(request, 'WIS2_app/user/add_body_student.html', {'form': form})
+  return render(request, 'WIS2_app/user/add_body_student.html', {'form': form})
 

@@ -2,27 +2,33 @@
 
 {% block content %}
 
-    <table>
+    <h2>Moje předměty</h2>
+    <table class="table w-50 p-3 table table-hover">
             {% if user %}
-                <tr><th>Moje předměty</th></tr>
-               <tr>
-                    <th>Zkratka</th>
-                    <th>Jméno</th>
-                    <th>kredity</th>
-                    <th>limit studentů</th>
-                    <th>Jazyk</th>
-                    <th>Typ</th>
-                </tr>
-                {% for item in registered_course_list %}
-                <tr>
-                    <th><a href="detail/{{ item.CourseUID.UID }}">{{item.CourseUID.UID}}</a></th>
-                    <th>{{item.CourseUID.name}}</th>
-                    <th>{{item.CourseUID.credits}}</th>
-                    <th>{{item.CourseUID.student_set.all.count}}/{{item.CourseUID.student_limit}}</th>
-                    <th>{{item.CourseUID.language}}</th>
-                    <th>{{item.CourseUID.kind}}</th>
-                </tr>
-                    {% endfor %}
+                <thead>
+                    <tr>
+                        <th>Zkratka</th>
+                        <th>Jméno</th>
+                        <th>kredity</th>
+                        <th>limit studentů</th>
+                        <th>Jazyk</th>
+                        <th>Typ</th>
+                        <th>Body</th>
+                    </tr>
+                </thead>
+                {% for item, value in registered_course_list_points %}
+                    <tbody>
+                        <tr>
+                            <td>{{item.CourseUID.UID}}</td>
+                            <td>{{item.CourseUID.name}}</td>
+                            <td>{{item.CourseUID.credits}}</td>
+                            <td>{{item.CourseUID.student_set.all.count}}/{{item.CourseUID.student_limit}}</td>
+                            <td>{{item.CourseUID.language}}</td>
+                            <td>{{item.CourseUID.kind}}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
 
             {% endif %}
 

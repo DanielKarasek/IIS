@@ -30,14 +30,16 @@ def get_user_kind(request: HttpRequest) -> Dict[str, bool]:
 
 
 def get_body_termin(TerminUID, StudentUID):
-    try:
-        _termin = Termin2Body.objects.get(Q(TerminUID=TerminUID) & Q(StudentUID=StudentUID))
-    except django.core.exceptions.ObjectDoesNotExist:
-        return 0
-    return _termin.points_given
+
+    _termin2body = Termin2Body.objects.select_related().filter(StudentUID__UserUID__exact=StudentUID,
+                                                          TerminUID__exact=TerminUID).first()
+
+    return _termin2body.points_given if _termin2body else 0
 
 
-def get_body_course(CourseUID, StudentUID):
+
+
+def get_body_course(CourseUID, UserUID):
     body = 0
 
     _termins = Termin.objects.filter(CourseUID=CourseUID).all()
@@ -45,6 +47,7 @@ def get_body_course(CourseUID, StudentUID):
         return body
 
     for _termin in _termins:
-        body = body + get_body_termin(_termin.ID, StudentUID)
+        print("tam")
+        body = body + get_body_termin(_termin.ID, UserUID)
 
     return body
