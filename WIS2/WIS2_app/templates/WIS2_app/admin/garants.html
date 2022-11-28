@@ -16,6 +16,7 @@
                 <td><a href="/courses/detail/{{ item.CourseUID.UID }}/">{{ item.CourseUID }}</a></td>
                 <td>{{ item.UserUID }}</td>
                 <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Schvalit</a></td>
+                <td><a href="/courses/delete/{{ item.CourseUID.UID }}/">Smazat predmet</a></td>
             </tr>
         {%  endfor %}
             <tr>

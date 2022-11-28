@@ -21,6 +21,7 @@ urlpatterns = [
   path('create_course/', views.courses_create, name="create_course"),
   path('courses/join/<slug:course_uid>/', views.courses_join),
   path('courses/leave/<slug:course_uid>/', views.courses_leave),
+  path('courses/delete/<slug:course_uid>/', views.courses_delete),
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   path('my_courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------

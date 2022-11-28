@@ -14,6 +14,16 @@
     <div>
     {{ course.description }}
     </div>
+    {% if is_course_garant %}
+        <a href="/courses/delete/{{ course.UID }}/">
+            <button>Smazat Kurz</button>
+        </a>
+        <a href="">
+            <button>Přidat lektora kurzu</button>
+        </a>
+    {% endif %}
+
+
     <h1>Termíny</h1>
     <h2>Testy</h2>
     <table class="table w-50 p-3 ">
