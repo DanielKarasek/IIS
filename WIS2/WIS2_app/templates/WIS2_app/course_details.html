@@ -2,12 +2,12 @@
 
 {% block content %}
     <h1> Shrnuti kurzu</h1>
-    <table>
-        <tr><td>Název</td><td>{{ course.name }}</td></tr>
-        <tr><td>Max. studentů</td><td>{{ course.student_limit }}</td></tr>
-        <tr><td>Jazyk</td><td>{{ course.language }}</td></tr>
-        <tr><td>Kredity</td><td>{{ course.credits }}</td></tr>
-        <tr><td>Druh</td><td>{{ course.kind }}</td></tr>
+    <table class="table w-25 p-3 ">
+        <tr><th>Název</th><td>{{ course.name }}</td></tr>
+        <tr><th>Max. studentů</th><td>{{ course.student_limit }}</td></tr>
+        <tr><th>Jazyk</th><td>{{ course.language }}</td></tr>
+        <tr><th>Kredity</th><td>{{ course.credits }}</td></tr>
+        <tr><th>Druh</th><td>{{ course.kind }}</td></tr>
 
     </table>
     <h1>Popis</h1>
@@ -16,13 +16,16 @@
     </div>
     <h1>Termíny</h1>
     <h2>Testy</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
+    <table class="table w-50 p-3 ">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Datum</th>
+                <th>Místnost</th>
+                <th>Body</th>
+            </tr>
+        <thead>
+        <tbody>
         {% for exam in exam_list %}
             <tr>
                 <td>{{ exam.TerminID.name }}</td>
@@ -38,6 +41,7 @@
                 {% endif %}
             </tr>
         {% endfor %}
+        </tbody>
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_exam/{{ course.UID }}">
@@ -45,12 +49,15 @@
         </a>
     {% endif %}
     <h2>Projekty</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Deadline</td>
-            <td>Body</td>
-        </tr>
+    <table class="table w-50 p-3 ">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Deadline</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for project in project_list %}
             <tr>
                 <td>{{ project.TerminID.name }}</td>
@@ -66,6 +73,7 @@
                 {% endif %}
             </tr>
         {% endfor %}
+        </tbody>
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_project/{{ course.UID }}">
@@ -73,30 +81,34 @@
         </a>
     {% endif %}
     <h2>Cvičení</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Perioda opakování</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
-        {% for practice_lecture in practice_lecture_list %}
-              <tr>
-                  <td>{{ practice_lecture.TerminID.name }}</td>
-                  <td>{{ practice_lecture.start }}</td>
-                  <td>{{ practice_lecture.periodicity }}</td>
-                  <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
-                  <td>{{ practice_lecture.TerminID.max_points }}</td>
-                  {% if is_course_garant %}
-                      <td>
-                          <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
-                              <button> Smazat</button>
-                          </a>
-                      </td>
-                 {% endif %}
-              </tr>
-        {% endfor %}
+    <table class="table w-50 p-3 ">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Datum</th>
+                <th>Perioda opakování</th>
+                <th>Místnost</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for practice_lecture in practice_lecture_list %}
+                  <tr>
+                      <td>{{ practice_lecture.TerminID.name }}</td>
+                      <td>{{ practice_lecture.start }}</td>
+                      <td>{{ practice_lecture.periodicity }}</td>
+                      <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
+                      <td>{{ practice_lecture.TerminID.max_points }}</td>
+                      {% if is_course_garant %}
+                          <td>
+                              <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
+                                  <button> Smazat</button>
+                              </a>
+                          </td>
+                     {% endif %}
+                  </tr>
+            {% endfor %}
+        </tbody>
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_practice_lecture/{{ course.UID }}">
@@ -104,30 +116,34 @@
         </a>
     {% endif %}
     <h2>Přednášky</h2>
-    <table>
-        <tr>
-            <td>Název</td>
-            <td>Datum</td>
-            <td>Perioda opakování</td>
-            <td>Místnost</td>
-            <td>Body</td>
-        </tr>
-        {% for lecture in lecture_list %}
-              <tr>
-                  <td>{{ lecture.TerminID.name }}</td>
-                  <td>{{ lecture.start }}</td>
-                  <td>{{ lecture.periodicity }}</td>
-                  <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
-                  <td>{{ lecture.TerminID.max_points }}</td>
-                  {% if is_course_garant %}
-                      <td>
-                          <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
-                              <button> Smazat</button>
-                          </a>
-                      </td>
-                  {% endif %}
-              </tr>
-        {% endfor %}
+    <table class="table w-50 p-3 ">
+        <thead>
+            <tr>
+                <th>Název</th>
+                <th>Datum</th>
+                <th>Perioda opakování</th>
+                <th>Místnost</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lecture in lecture_list %}
+                  <tr>
+                      <td>{{ lecture.TerminID.name }}</td>
+                      <td>{{ lecture.start }}</td>
+                      <td>{{ lecture.periodicity }}</td>
+                      <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
+                      <td>{{ lecture.TerminID.max_points }}</td>
+                      {% if is_course_garant %}
+                          <td>
+                              <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
+                                  <button> Smazat</button>
+                              </a>
+                          </td>
+                      {% endif %}
+                  </tr>
+            {% endfor %}
+        </tbody>
     </table>
     {% if is_course_garant %}
         <a href="/courses/create_lecture/{{ course.UID }}">
