@@ -32,11 +32,9 @@ def get_user_kind(request: HttpRequest) -> Dict[str, bool]:
 def get_body_termin(TerminUID, StudentUID):
 
     _termin2body = Termin2Body.objects.select_related().filter(StudentUID__UserUID__exact=StudentUID,
-                                                          TerminUID__exact=TerminUID).first()
+                                                               TerminUID__exact=TerminUID).first()
 
     return _termin2body.points_given if _termin2body else 0
-
-
 
 
 def get_body_course(CourseUID, UserUID):
