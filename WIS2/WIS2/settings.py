@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    #'django.contrib.staticfiles',
     'WIS2_app.apps.Wis2AppConfig',
     'WIS2_Login.apps.Wis2LoginConfig',
 ]
