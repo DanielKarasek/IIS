@@ -1,0 +1,1 @@
+web: gunicorn WIS2/WIS2.wsgi
