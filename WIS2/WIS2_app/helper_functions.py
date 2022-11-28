@@ -14,9 +14,12 @@ def get_user_kind(request: HttpRequest) -> Dict[str, bool]:
     Returned dict is in form {user: bool, lecturer: bool, garant: bool}
     """
 
-    user_kind_dict = {"user": False, "garant": False, "lecturer": False}
+    user_kind_dict = {"user": False, "garant": False, "lecturer": False, "admin": False}
     if not request.user.is_authenticated:
         return user_kind_dict
+    if request.user.is_staff:
+        user_kind_dict["admin"] = True
+
     user_kind_dict["user"] = True
     if len(Garant.objects.filter(UserUID__exact=request.user).all()):
         user_kind_dict["garant"] = True

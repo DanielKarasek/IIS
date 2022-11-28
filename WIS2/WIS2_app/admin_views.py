@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import *
+from .helper_functions import get_user_kind
 from .forms import CreateRoomForm
 import django.core.exceptions
 from .models import Course, Garant
@@ -21,7 +22,8 @@ def room(request: HttpRequest):
     except django.core.exceptions.ObjectDoesNotExist:
         rooms = []
     return render(request, "WIS2_app/admin/rooms.html", {"form": form,
-                                                         "rooms": rooms})
+                                                         "rooms": rooms,
+                                                         **get_user_kind(request)})
 
 
 @login_required
@@ -36,7 +38,7 @@ def room_delete(request: HttpRequest, room_uid):
 
 
 @login_required
-def garants(requst: HttpRequest):
+def garants(request: HttpRequest):
     try:
         garants_confirmed = Garant.objects.filter(confirmed=True).all()
     except django.core.exceptions.ObjectDoesNotExist:
@@ -46,8 +48,9 @@ def garants(requst: HttpRequest):
     except django.core.exceptions.ObjectDoesNotExist:
         garants_unconfirmed = []
 
-    return render(requst, "WIS2_app/admin/garants.html", {"garants_waiting": garants_unconfirmed,
-                                                          "garants_verified": garants_confirmed})
+    return render(request, "WIS2_app/admin/garants.html", {"garants_waiting": garants_unconfirmed,
+                                                          "garants_verified": garants_confirmed,
+                                                          **get_user_kind(request)})
 
 
 @login_required

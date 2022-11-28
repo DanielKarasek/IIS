@@ -13,9 +13,9 @@
         </tr>
         {% for item in garants_waiting %}
             <tr>
-                <td><a href="/courses/detail/{{ item.CourseUID }}/">{{ item.CourseUID }}</a></td>
+                <td><a href="/courses/detail/{{ item.CourseUID.UID }}/">{{ item.CourseUID }}</a></td>
                 <td>{{ item.UserUID }}</td>
-                <td><a href="/admin/garants/{{ item.CourseUID }}/">Schvalit</a></td>
+                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Schvalit</a></td>
             </tr>
         {%  endfor %}
             <tr>
@@ -28,9 +28,9 @@
         </tr>
         {% for item in garants_verified %}
             <tr>
-                <td><a href="/courses/detail/{{ item.CourseUID }}/">{{ item.CourseUID }}</a></td>
+                <td><a href="/courses/detail/{{ item.CourseUID.UID }}/">{{ item.CourseUID }}</a></td>
                 <td>{{ item.UserUID }}</td>
-                <td><a href="/admin/garants/{{ item.CourseUID }}/">Odschvalit</a></td>
+                <td><a href="/admin/garants/{{ item.CourseUID.UID }}/">Odschvalit</a></td>
             </tr>
         {%  endfor %}
     </table>
