@@ -19,13 +19,13 @@
                 {% for item, value in registered_course_list_points %}
                     <tbody>
                         <tr>
-                            <td>{{item.CourseUID.UID}}</td>
-                            <td>{{item.CourseUID.name}}</td>
-                            <td>{{item.CourseUID.credits}}</td>
-                            <td>{{item.CourseUID.student_set.all.count}}/{{item.CourseUID.student_limit}}</td>
-                            <td>{{item.CourseUID.language}}</td>
-                            <td>{{item.CourseUID.kind}}</td>
-                            <td>{{ value }}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.UID}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.name}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.credits}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.student_set.all.count}}/{{item.CourseUID.student_limit}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.language}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{item.CourseUID.kind}}</td>
+                            <td onclick="location.href='detail/{{ item.CourseUID.UID }}'">{{ value }}</td>
                         </tr>
                     </tbody>
                 {% endfor %}
