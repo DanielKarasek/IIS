@@ -18,7 +18,7 @@
                     <th><a href="detail/{{ item.CourseUID.UID }}">{{item.CourseUID.UID}}</a></th>
                     <th>{{item.CourseUID.name}}</th>
                     <th>{{item.CourseUID.credits}}</th>
-                    <th>{{item.CourseUID.student_limit}}</th>
+                    <th>{{item.CourseUID.student_set.all.count}}/{{item.CourseUID.student_limit}}</th>
                     <th>{{item.CourseUID.language}}</th>
                     <th>{{item.CourseUID.kind}}</th>
                 </tr>

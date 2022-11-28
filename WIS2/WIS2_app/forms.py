@@ -58,6 +58,7 @@ class CreateRoomForm(forms.Form):
     uid = forms.CharField(label="* Jméno místnosti:", max_length=10, required=True)
 
     def save(self):
+        print("got here")
         room = Room()
         room.roomUID = self.cleaned_data['uid']
         room.save()
@@ -65,7 +66,7 @@ class CreateRoomForm(forms.Form):
 
 class GeneralTermForm(forms.Form):
   name = forms.CharField(label="* Jméno:", required=True)
-  room = forms.CharField(label="* Místnost:", required=True)
+  room = forms.ModelChoiceField(label="* Místnost:", queryset=Room.objects.all(), required=True)
   points = forms.IntegerField(label="* Maximum bodů:", required=True, min_value=0)
   desc = forms.CharField(label="Popis", required=False,
                          widget=forms.Textarea)
@@ -74,7 +75,7 @@ class GeneralTermForm(forms.Form):
   def save(self, course_uid):
     termin = Termin()
     termin.CourseUID = Course.objects.get(UID__exact=course_uid)
-    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'])
+    termin.RoomUID = Room.objects.get(roomUID__exact=self.cleaned_data['room'].roomUID)
     termin.max_points = self.cleaned_data['points']
     termin.kind = self.kind_perxsingle
     termin.description = self.cleaned_data['desc']
@@ -111,7 +112,7 @@ class CreatePracticeLectureForm(CreatePeriodicForm):
 
 
 class CreateOneShotTerm(GeneralTermForm):
-  date = forms.DateTimeField(label="* date", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M", required=True)
+  date = forms.DateTimeField(label="* datum", widget=forms.DateTimeInput, input_formats="%Y-%M-%D %H:%M", required=True)
   kind_perxsingle = 'ONE'
   kind_exmxproj = None
 

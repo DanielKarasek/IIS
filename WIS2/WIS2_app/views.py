@@ -6,7 +6,8 @@ from django.contrib.auth import update_session_auth_hash
 import django.core.exceptions
 from django.db.models import Q, Count
 from .forms import (CreateCourseForm, CreateProjectForm,
-                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm)
+                    CreateLectureForm, CreateExamForm, CreatePracticeLectureForm,
+                    CreateTermin2Body)
 from .models import *
 from django.http.response import HttpResponse
 from .helper_functions import get_user_kind
@@ -276,3 +277,55 @@ def delete_termin(request: HttpRequest, course_uid: str, termin_uid: str) -> Htt
 
   termin.delete()
   return redirect(f'/courses/detail/{course_uid}')
+
+
+###
+### TOTO JE NA HODNOTENIE postupne presmerovava ako klikas buttons najrpv z kurzov potom na terminy a studentov
+###
+def evaluation(request: HttpRequest) -> HttpResponse:
+    All_courses = Course.objects.all()
+
+    return render(request, "WIS2_app/user/student_evaluation.html", {'course_list': All_courses})
+
+def evaluation_termin(request: HttpRequest, course_uid) -> HttpResponse:
+
+    period_terms = (TerminPeriod.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
+
+    single_terms = (TerminSingle.objects.
+                    select_related('TerminID').
+                    filter(TerminID__CourseUID__exact=course_uid))
+
+
+    exam_list = single_terms.filter(kind__exact="EXM").all()
+    project_list = single_terms.filter(kind__exact="PRJ").all()
+    lecture_list = period_terms.filter(kind__exact="LEC").all()
+    practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
+    return render(request, "WIS2_app/user/evaluation_termin.html",
+                  {'course': course_uid,
+                   'exam_list': exam_list,
+                   'project_list': project_list,
+                   'lecture_list': lecture_list,
+                   'practice_lecture_list': practice_lecture_list})
+
+
+def evaluation_student(request: HttpRequest, course_uid, termin_uid) -> HttpResponse:
+    student_list = Course.objects.get(UID__exact = course_uid).student_set.all()
+    termin2body_list = Termin.objects.get(ID__exact = termin_uid).termin2body_set.all()
+    return render(request, "WIS2_app/user/evaluation_student.html", {'student_list': student_list,
+                                                                     'termin_uid': termin2body_list})
+
+def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_uid) -> HttpResponse:
+    #print(TerminSingle.objects.get(TerminID__exact=termin_uid))
+    #print(Termin.objects.get(ID__exact= termin_uid).kind)
+    #print(User.objects.get(username__exact = user_uid).id)
+    if request.method == 'POST':
+        form = CreateTermin2Body(request.POST)
+        if form.is_valid():
+            form.save(request, course_uid, termin_uid, user_uid)
+    else:
+        form = CreateTermin2Body()
+
+    return render(request, 'WIS2_app/user/add_body_student.html', {'form': form})
+
