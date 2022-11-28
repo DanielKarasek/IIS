@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <h1>Zadanie bodov</h1>
+    <table>
+      <tr>
+        <td>
+          <form method="post">
+        {%  csrf_token %}
+        {{ form}}
+        <button type="submit" >submit</button>
+      </form>
+        </td>
+
+      </tr>
+
+
+
+    </table>
+
+
+{% endblock %}

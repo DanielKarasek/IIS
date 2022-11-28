@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <h1> {{course}} - Terminy</h1>
+    <h2>Testy</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for exam in exam_list %}
+            <tr>
+                <td>{{ exam.TerminID.name }}</td>
+                <td>{{ exam.date }}</td>
+                <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
+                <td>{{ exam.TerminID.max_points }}</td>
+                <td>
+                    <a href="{{exam.TerminID.ID}}/">
+                        <button> Studenti </button>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Projekty</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Deadline</td>
+            <td>Body</td>
+        </tr>
+        {% for project in project_list %}
+            <tr>
+                <td>{{ project.TerminID.name }}</td>
+                <td>{{ project.date }}</td>
+                <td>{{ project.TerminID.max_points }}</td>
+                <td>
+                    <a href="{{project.TerminID.ID}}/">
+                        <button> Studenti </button>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Cvičení</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Perioda opakování</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for practice_lecture in practice_lecture_list %}
+              <tr>
+                  <td>{{ practice_lecture.TerminID.name }}</td>
+                  <td>{{ practice_lecture.start }}</td>
+                  <td>{{ practice_lecture.periodicity }}</td>
+                  <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
+                  <td>{{ practice_lecture.TerminID.max_points }}</td>
+                  <td>
+                      <a href="{{ practice_lecture.TerminID.ID }}/">
+                          <button> Studenti </button>
+                      </a>
+                  </td>
+              </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Přednášky</h2>
+    <table>
+        <tr>
+            <td>Název</td>
+            <td>Datum</td>
+            <td>Perioda opakování</td>
+            <td>Místnost</td>
+            <td>Body</td>
+        </tr>
+        {% for lecture in lecture_list %}
+              <tr>
+                  <td>{{ lecture.TerminID.name }}</td>
+                  <td>{{ lecture.start }}</td>
+                  <td>{{ lecture.periodicity }}</td>
+                  <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
+                  <td>{{ lecture.TerminID.max_points }}</td>
+                  <td>
+                      <a href="{{ lecture.TerminID.ID }}">
+                          <button> Studenti </button>
+                      </a>
+                  </td>
+              </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

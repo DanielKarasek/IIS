@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends 'WIS2_app/base.html' %}
+
+{% block content %}
+    <h1>Hodnotenie studentov</h1>
+    <table>
+           <tr><th>Vsechny predmety</th></tr>
+            <tr>
+                <th>Zkratka</th>
+                <th>Jméno</th>
+                <th>Kredity</th>
+                <th>Limit studentů</th>
+                <th>Jazyk</th>
+                <th>Typ</th>
+            </tr>
+            {% for item in course_list%}
+            <tr>
+                <th>{{item.UID}}</th>
+                <th>{{item.name}}</th>
+                <th>{{item.credits}}</th>
+                <th>{{ item.student_set.count }}/{{item.student_limit}}</th>
+                <th>{{item.language}}</th>
+                <th>{{item.kind}}</th>
+                <th><a href="{{ item.UID }}"><button>Terminy</button></a></th>
+            </tr>
+            {% endfor %}
+    </table>
+
+{% endblock %}

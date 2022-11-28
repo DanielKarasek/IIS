@@ -24,6 +24,10 @@ urlpatterns = [
   path('courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   path('my_courses/detail/<slug:course_uid>/', views.courses_detail, name="courses_detail"),
   #TERMIN---------------------------------------------------------------
+  path('student_evaluation/', views.evaluation, name="hodnoceni"),
+  path('student_evaluation/<slug:course_uid>/', views.evaluation_termin, name="hodnoceni_studentu"),
+  path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/', views.evaluation_student, name="hodnoceni_studentu"),
+  path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/<slug:user_uid>/', views.evaluation_student_body, name="zadavanie_bodov"),
   path('courses/termins/<slug:course_uid>/', views.termins, name="termins"),
   path('courses/create_<slug:termin_type>/<slug:course_uid>/', views.create_termin),
   path('courses/termins/<slug:course_uid>/delete/<slug:termin_uid>/', views.delete_termin, name="delete_termin"),
