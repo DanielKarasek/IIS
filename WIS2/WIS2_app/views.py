@@ -13,8 +13,6 @@ from django.http.response import HttpResponse
 from .helper_functions import get_user_kind, get_body_course, get_body_termin
 import django.contrib.messages as messages
 
-from django.db.models import OuterRef, Subquery
-
 def index(request: HttpRequest) -> HttpResponse:
     user_kind = get_user_kind(request)
 
@@ -67,29 +65,18 @@ def courses(request: HttpRequest) -> HttpResponse:
                               filter(student__UserUID__exact=request.user.id).
                               all())
 
-        garanting = not_registered.filter(teacher__UserUID__exact=request.user.id).all().annotate(
-              confirmed=Subquery(
-                Garant.objects.filter(
-                  UserUID__exact=request.user.id,
-                  CourseUID__exact=OuterRef("UID")
-                ).values('confirmed')
-            ))
+        garanting = not_registered.filter(garant__UserUID__exact=request.user.id).all()
+        teaching = not_registered.filter(teacher__UserUID__exact=request.user.id).all()
 
-        teaching = not_registered.filter(teacher__UserUID__exact=request.user.id).all().annotate(
-              confirmed=Subquery(
-                Garant.objects.filter(
-                  UserUID__exact=request.user.id,
-                  CourseUID__exact=OuterRef("UID")
-                ).values('confirmed')
-            ))
         not_registered = (not_registered.
                           exclude(student__UserUID__exact=request.user.id).
                           exclude(garant__UserUID__exact=request.user.id).
                           exclude(teacher__UserUID__exact=request.user.id).
                           exclude(garant__confirmed__isnull=True).
-                          exclude(garant__confirmed=False))
+                          exclude(garant__confirmed=True))
 
     not_registered = not_registered.all()
+
     # get all existing courses
     return render(request, "WIS2_app/courses.html", {'not_registered': not_registered,
                                                      'registered_course_list': registered_courses,
@@ -148,8 +135,6 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     if request.POST.get("add"):
         return redirect("/courses/create_termin/" + course_uid)
 
-    is_course_student = (Student.objects.
-                         filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id))
     is_garant = (Garant.objects.
                  filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id).
                  filter(confirmed=True).
@@ -158,6 +143,7 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     period_terms = (TerminPeriod.objects.
                     select_related('TerminID').
                     filter(TerminID__CourseUID__exact=course_uid))
+
     single_terms = (TerminSingle.objects.
                     select_related('TerminID').
                     filter(TerminID__CourseUID__exact=course_uid))
@@ -185,8 +171,9 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
                    'lecture_list': lecture_list,
                    'practice_lecture_list': practice_lecture_list,
                    'is_course_garant': is_garant,
-                   'is_course_student': is_course_student,
                    **get_user_kind(request)})
+
+
 # Kurzy interakce s uzivatelem
 
 
@@ -328,7 +315,6 @@ def evaluation_student(request: HttpRequest, course_uid, termin_uid) -> HttpResp
     termin2body_list = Termin.objects.get(ID__exact = termin_uid).termin2body_set.all()
     return render(request, "WIS2_app/user/evaluation_student.html", {'student_list': student_list,
                                                                      'termin_uid': termin2body_list})
-
 
 def evaluation_student_body(request: HttpRequest, course_uid, termin_uid, user_uid) -> HttpResponse:
   _termin = Termin.objects.get(ID__exact=termin_uid)
