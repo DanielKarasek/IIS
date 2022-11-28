@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% extends 'WIS2_app/base.html' %}
+{% if user.is_staff %}
+{% block content %}
+    <table>
+        <tr>
+            <th>Ceka na verifikaci</th>
+        </tr>
+        <tr>
+            <th>Predmet</th>
+            <th>Garant</th>
+            <th>Schvalit</th>
+        </tr>
+        {% for item in garants_waiting %}
+            <tr>
+                <td><a href="/courses/detail/{{ item.CourseUID }}/">{{ item.CourseUID }}</a></td>
+                <td>{{ item.UserUID }}</td>
+                <td><a href="/admin/garants/{{ item.CourseUID }}/">Schvalit</a></td>
+            </tr>
+        {%  endfor %}
+            <tr>
+            <th>Schvalene kurzy</th>
+        </tr>
+        <tr>
+            <th>Predmet</th>
+            <th>Garant</th>
+            <th>Schvalit</th>
+        </tr>
+        {% for item in garants_verified %}
+            <tr>
+                <td><a href="/courses/detail/{{ item.CourseUID }}/">{{ item.CourseUID }}</a></td>
+                <td>{{ item.UserUID }}</td>
+                <td><a href="/admin/garants/{{ item.CourseUID }}/">Odschvalit</a></td>
+            </tr>
+        {%  endfor %}
+    </table>
+
+{% endblock %}
+{% else %}
+    <meta http-equiv="Refresh" content="0; url=''"/>
+{% endif %}
