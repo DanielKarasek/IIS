@@ -87,7 +87,6 @@ def courses(request: HttpRequest) -> HttpResponse:
         garanting = not_registered.filter(garant__UserUID__exact=request.user.id).all().annotate(
           confirmed=Subquery(
             Garant.objects.filter(
-              UserUID__exact=request.user.id,
               CourseUID__exact=OuterRef("UID")
             ).values('confirmed')
           ))
@@ -96,7 +95,6 @@ def courses(request: HttpRequest) -> HttpResponse:
         teaching = not_registered.filter(teacher__UserUID__exact=request.user.id).all().annotate(
           confirmed=Subquery(
             Garant.objects.filter(
-              UserUID__exact=request.user.id,
               CourseUID__exact=OuterRef("UID")
             ).values('confirmed')
           ))
