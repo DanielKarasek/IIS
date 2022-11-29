@@ -131,7 +131,7 @@ def courses_create(request: HttpRequest) -> HttpResponse:
             course_tmp2 = Course.objects.filter(name__exact=form.cleaned_data['name']).first()
             if course_tmp1 or course_tmp2:
               messages.error(request, "Kurz s tímto názvem nebo zkratkou již existuje")
-              return render(request, "WIS2_app/user/create_course.html", {'form': form})
+              return render(request, "WIS2_app/user/create_course.html", {'form': form, **get_user_kind(request)})
             else:
               form.save(request.user)
 
@@ -139,7 +139,7 @@ def courses_create(request: HttpRequest) -> HttpResponse:
     else:
         form = CreateCourseForm()
 
-    return render(request, "WIS2_app/user/create_course.html", {'form': form})
+    return render(request, "WIS2_app/user/create_course.html", {'form': form, **get_user_kind(request)})
 
 
 @login_required
@@ -445,4 +445,5 @@ def courses_add_lector(request: HttpRequest, course_uid) -> HttpResponse:
             form = AddLectorForm(request, course_uid)
 
         return render(request, "WIS2_app/user/lector/garant/add_lector.html", {'form': form,
-                                                                               'course_name': course_uid})
+                                                                               'course_name': course_uid,
+                                                                               **get_user_kind(request)})
