@@ -12,10 +12,9 @@ from django.http.response import HttpResponse
 
 from .helper_functions import get_user_kind, get_body_course, get_body_termin
 from .models import Course, Garant, Student, Teacher, TerminPeriodic, Termin, TerminSingle
-from .forms import (CreateCourseForm, CreateProjectForm,
+from .forms import (AddLectorForm, CreateCourseForm, CreateProjectForm,
                     CreateLectureForm, CreateExamForm, CreatePracticeLectureForm,
                     CreateTermin2Body)
-
 
 def index(request: HttpRequest) -> HttpResponse:
     """
@@ -205,6 +204,7 @@ def courses_detail(request: HttpRequest, course_uid: str) -> HttpResponse:
     lecture_list = period_terms.filter(kind__exact="LEC").all()
     practice_lecture_list = period_terms.filter(kind__exact="PLEC").all()
 
+    print(project_list)
     # annotate would be better, or for in for, but no time nor IQ points
     for a in exam_list:
       a.body = get_body_termin(a.TerminID, request.user.id)
@@ -349,7 +349,8 @@ def evaluations_courses_view(request: HttpRequest) -> HttpResponse:
     """
     View in which teacher can choose in which class he wants to give points to students
     """
-    courses = Course.objects.select_related().filter(teacher__UserUID__exact=request.user.id).all()
+    courses = Course.objects.select_related().filter(teacher__UserUID__exact=request.user.id,
+                                                     garant__confirmed=True).all()
 
     return render(request, "WIS2_app/user/lector/evaluation_course.html", {'course_list': courses, **get_user_kind(request)})
 
@@ -390,7 +391,6 @@ def evaluation_student(request: HttpRequest, course_uid: str, termin_uid: str) -
                                                                      'termin_uid': termin2body_list,
                                                                             **get_user_kind(request)})
 
-
 def evaluation_student_body(request: HttpRequest, course_uid: str, termin_uid: str, user_uid: str) -> HttpResponse:
   """
   View for point addition to given student in given term and course
@@ -406,3 +406,43 @@ def evaluation_student_body(request: HttpRequest, course_uid: str, termin_uid: s
 
   return render(request, 'WIS2_app/user/lector/add_body_student.html', {'form': form, **get_user_kind(request)})
 
+
+def detail_term(request: HttpRequest, termin_id: str) -> HttpResponse:
+  """
+  View for detail of term
+  """
+
+  single_term = (TerminSingle.objects.
+                 select_related().filter(TerminID__exact=termin_id).
+                 first())
+  periodic_term = (TerminPeriodic.objects.
+                   select_related().filter(TerminID__exact=termin_id).
+                   first())
+
+  result_term = single_term if single_term else periodic_term
+  course = Course.objects.filter(name__exact=result_term.TerminID.CourseUID).first()
+  return render(request,
+                "WIS2_app/termin_detail.html",
+                {'result_term': result_term,
+                 'is_periodic': periodic_term,
+                 'course': course,
+                 **get_user_kind(request)})
+
+@login_required
+def courses_add_lector(request: HttpRequest, course_uid) -> HttpResponse:
+    is_garant = (Garant.objects.
+             filter(CourseUID__exact=course_uid, UserUID__exact=request.user.id).
+             filter(confirmed=True).
+             first())
+
+    if is_garant:
+        if request.method == 'POST':
+            form = AddLectorForm(request, course_uid, request.POST)
+            if form.is_valid():
+                form.save(course_uid)
+                return redirect("/courses/detail/" + course_uid)
+        else:
+            form = AddLectorForm(request, course_uid)
+
+        return render(request, "WIS2_app/user/lector/garant/add_lector.html", {'form': form,
+                                                                               'course_name': course_uid})

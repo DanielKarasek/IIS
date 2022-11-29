@@ -1,0 +1,17 @@
+{% extends 'WIS2_app/base.html' %}
+
+
+{% block content %}
+    <h1> Přidání lektora do kurzu {{ course_name }}</h1>
+        <tr>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <p>Pole s '*' jsou povinné</p>
+                    <button type="submit" name="Add" value ="Add">Přidat</button>
+                </form>
+            </td>
+        </tr>
+{% endblock %}

@@ -198,8 +198,8 @@ class CreateTermin2Body(forms.Form):
     self.fields['body'] = forms.IntegerField(label="* Body:", min_value=0, max_value=max_body, required=True)
 
   def save(self, request: HttpRequest, course_uid: str, termin_uid: str, user_uid: str) -> None:
-    terminbody = Term2Points()
-    already_exists = Term2Points.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
+    terminbody = Termin2Body()
+    already_exists = Termin2Body.objects.filter(TerminUID__exact=Termin.objects.get(ID__exact=termin_uid),
                                                 StudentUID__exact=Student.objects.get(
                                                   UserUID__exact=User.objects.get(username__exact=user_uid).id,
                                                   CourseUID__exact=course_uid)).first()
@@ -213,5 +213,21 @@ class CreateTermin2Body(forms.Form):
     terminbody.TeacherUID = Teacher.objects.get(UserUID__exact=User.objects.get(username__exact=request.user).id,
                                                 CourseUID__exact=course_uid)
 
-    terminbody.points_given = self.cleaned_data['body']
+    terminbody.points_given = self.cleaned_data['body'] + self.cleaned_data['body_extra']
     terminbody.save()
+
+
+class AddLectorForm(forms.Form):
+  def __init__(self, request, course_uid, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    valid_candidate = (User.objects.select_related().exclude(username__exact=request.user).
+                       exclude(student__CourseUID__exact=course_uid).
+                       exclude(teacher__CourseUID__exact=course_uid)).all()
+    self.fields['userUID'] = forms.ModelChoiceField(label="Lektor:", queryset=valid_candidate,
+                                                    required=True)
+
+  def save(self, course_uid):
+    teacher = Teacher()
+    teacher.UserUID = self.cleaned_data['userUID']
+    teacher.CourseUID = Course.objects.get(UID__exact=course_uid)
+    teacher.save()

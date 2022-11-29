@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1> Shrnuti kurzu</h1>
-    <table class="table w-25 p-3 ">
+    <table class="table w-25 p-3  table-hover">
         <tr><th>Název</th><td>{{ course.name }}</td></tr>
         <tr><th>Max. studentů</th><td>{{ course.student_limit }}</td></tr>
         <tr><th>Jazyk</th><td>{{ course.language }}</td></tr>
@@ -18,7 +18,7 @@
         <a href="/courses/delete/{{ course.UID }}/">
             <button>Smazat Kurz</button>
         </a>
-        <a href="">
+        <a  href="/courses/add_lector/{{course.UID}}/">
             <button>Přidat lektora kurzu</button>
         </a>
     {% endif %}
@@ -26,7 +26,7 @@
 
     <h1>Termíny</h1>
     <h2>Testy</h2>
-    <table class="table w-50 p-3 ">
+    <table class="table w-50 p-3 table-hover">
         <thead>
             <tr>
                 <th>Název</th>
@@ -38,13 +38,13 @@
         <tbody>
         {% for exam in exam_list %}
             <tr>
-                <td>{{ exam.TerminID.name }}</td>
-                <td>{{ exam.date }}</td>
-                <td>{{ exam.TerminID.RoomUID.roomUID }}</td>
-                <td>{% if is_course_student %}{{ exam.body }}/{% endif %}{{ exam.TerminID.max_points }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ exam.TerminID.ID }}'">{{ exam.TerminID.name }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ exam.TerminID.ID }}'">{{ exam.date }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ exam.TerminID.ID }}'">{{ exam.TerminID.RoomUID.roomUID }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ exam.TerminID.ID }}'">{% if is_course_student %}{{ exam.body }}/{% endif %}{{ exam.TerminID.max_points }}</td>
                 {% if is_course_garant %}
                     <td>
-                        <a href="/courses/termins/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
+                        <a href="/courses/terms_view/{{ course.UID }}/delete/{{ exam.TerminID.ID }}/">
                             <button> Smazat </button>
                         </a>
                     </td>
@@ -59,7 +59,7 @@
         </a>
     {% endif %}
     <h2>Projekty</h2>
-    <table class="table w-50 p-3 ">
+    <table class="table w-50 p-3 table-hover">
         <thead>
             <tr>
                 <th>Název</th>
@@ -70,13 +70,13 @@
         <tbody>
         {% for project in project_list %}
             <tr>
-                <td>{{ project.TerminID.name }}</td>
-                <td>{{ project.date }}</td>
-                <td>{% if is_course_student %}{{ student.body }}/{% endif %}{{ student.TerminID.max_points }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ project.TerminID.ID }}'">{{ project.TerminID.name }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ project.TerminID.ID }}'">{{ project.date }}</td>
+                <td onclick="location.href='/courses/terms_view/detail/{{ project.TerminID.ID }}'">{% if is_course_student %}{{ project.body }}/{% endif %}{{ project.TerminID.max_points }}</td>
                 {% if is_course_garant %}
                     <td>
 
-                        <a href="/courses/termins/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
+                        <a href="/courses/terms_view/{{ course.UID }}/delete/{{ project.TerminID.ID }}/">
                             <button> Smazat </button>
                         </a>
                     </td>
@@ -91,7 +91,7 @@
         </a>
     {% endif %}
     <h2>Cvičení</h2>
-    <table class="table w-50 p-3 ">
+    <table class="table w-50 p-3 table-hover">
         <thead>
             <tr>
                 <th>Název</th>
@@ -104,14 +104,14 @@
         <tbody>
             {% for practice_lecture in practice_lecture_list %}
                   <tr>
-                      <td>{{ practice_lecture.TerminID.name }}</td>
-                      <td>{{ practice_lecture.start }}</td>
-                      <td>{{ practice_lecture.periodicity }}</td>
-                      <td>{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
-                      <td>{% if is_course_student %}{{ practice_lecture.body }}/{% endif %}{{ practice_lecture.TerminID.max_points }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ practice_lecture.TerminID.ID }}'">{{ practice_lecture.TerminID.name }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ practice_lecture.TerminID.ID }}'">{{ practice_lecture.start }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ practice_lecture.TerminID.ID }}'">{{ practice_lecture.periodicity }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ practice_lecture.TerminID.ID }}'">{{ practice_lecture.TerminID.RoomUID.roomUID }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ practice_lecture.TerminID.ID }}'">{% if is_course_student %}{{ practice_lecture.body }}/{% endif %}{{ practice_lecture.TerminID.max_points }}</td>
                       {% if is_course_garant %}
                           <td>
-                              <a href="/courses/termins/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
+                              <a href="/courses/terms_view/{{ course.UID }}/delete/{{ practice_lecture.TerminID.ID }}/">
                                   <button> Smazat</button>
                               </a>
                           </td>
@@ -126,7 +126,7 @@
         </a>
     {% endif %}
     <h2>Přednášky</h2>
-    <table class="table w-50 p-3 ">
+    <table class="table w-50 p-3 table-hover">
         <thead>
             <tr>
                 <th>Název</th>
@@ -139,14 +139,14 @@
         <tbody>
             {% for lecture in lecture_list %}
                   <tr>
-                      <td>{{ lecture.TerminID.name }}</td>
-                      <td>{{ lecture.start }}</td>
-                      <td>{{ lecture.periodicity }}</td>
-                      <td>{{ lecture.TerminID.RoomUID.roomUID }}</td>
-                      <td>{% if is_course_student %}{{ lecture.body }}/{% endif %}{{ lecture.TerminID.max_points }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ lecture.TerminID.ID }}'">{{ lecture.TerminID.name }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ lecture.TerminID.ID }}'">{{ lecture.start }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ lecture.TerminID.ID }}'">{{ lecture.periodicity }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ lecture.TerminID.ID }}'">{{ lecture.TerminID.RoomUID.roomUID }}</td>
+                      <td onclick="location.href='/courses/terms_view/detail/{{ lecture.TerminID.ID }}'">{% if is_course_student %}{{ lecture.body }}/{% endif %}{{ lecture.TerminID.max_points }}</td>
                       {% if is_course_garant %}
                           <td>
-                              <a href="/courses/termins/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
+                              <a href="/courses/terms_view/{{ course.UID }}/delete/{{ lecture.TerminID.ID }}">
                                   <button> Smazat</button>
                               </a>
                           </td>

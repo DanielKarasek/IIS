@@ -30,9 +30,10 @@ urlpatterns = [
   path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/', views.evaluation_student, name="hodnoceni_studentu"),
   path('student_evaluation/<slug:course_uid>/<slug:termin_uid>/<slug:user_uid>/', views.evaluation_student_body, name="zadavanie_bodov"),
   path('courses/terms_view/<slug:course_uid>/', views.terms_view, name="terms_view"),
+  path('courses/add_lector/<slug:course_uid>/', views.courses_add_lector, name="add_lector"),
   path('courses/create_<slug:termin_type>/<slug:course_uid>/', views.create_term_view),
   path('courses/terms_view/<slug:course_uid>/delete/<slug:termin_uid>/', views.delete_ter, name="delete_ter"),
-
+  path('courses/terms_view/detail/<slug:termin_id>', views.detail_term)
   #path('coures/terms_view/<slug:course_uid>/', ),
   #path('courses/terms_view/<slug:course_uid>/detail/<slug:termin_uid>/', ),
   #path('courses/terms_view/<slug:course_uid>/body/<slug:termin_uid>/', ),

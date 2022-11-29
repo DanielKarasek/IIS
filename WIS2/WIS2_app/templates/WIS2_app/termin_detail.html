@@ -1,0 +1,38 @@
+{% extends 'WIS2_app/base.html' %}
+{% block content %}
+    <table class="table w-25 p-3 table-light ">
+        <h1>Detail termínu</h1>
+        <tr>
+            <th class="table-dark">Název</th> <td>{{ result_term.TerminID.name }}</td>
+        </tr>
+        <tr>
+            <th class="table-dark">Kurz</th><td>{{ course.UID }}</td>
+        </tr>
+        <tr>
+            <th class="table-dark">Místnost</th><td>{{ result_term.TerminID.RoomUID.roomUID }}</td>
+        </tr>
+        {% if is_periodic %}
+            <tr>
+                <th class="table-dark">První datum</th><td>{{ result_term.start }}</td>
+            </tr>
+            <tr>
+                <th class="table-dark">Perioda opakování (týdny)</th><td>{{ result_term.periodicity }}</td>
+            </tr>
+            <tr>
+                <th class="table-dark">Celkem opakování</th><td>{{ result_term.repeats }}</td>
+            </tr>
+        {% endif %}
+        {% if not is_periodic %}
+            <tr>
+                <th class="table-dark">Datum</th><td>{{ result_term.date }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th class="table-dark">Maximum bodů</th><td>{{ result_term.TerminID.max_points }}</td>
+        </tr>
+    </table>
+
+    <h2>Popis</h2>
+    <p>{{ result_term.TerminID.description }}</p>
+
+{% endblock %}

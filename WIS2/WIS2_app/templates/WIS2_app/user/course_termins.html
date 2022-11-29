@@ -12,7 +12,7 @@
     {% for item in course_list %}
     <tr>
         <th>{{ item.CourseUID.UID }}</th>
-        <th><a href="/coures/termins/{{ item.CourseUID.UID }}/">{{item.CourseUID.name}}</a></th>
+        <th><a href="/coures/terms_view/{{ item.CourseUID.UID }}/">{{item.CourseUID.name}}</a></th>
         <th>{{item.CourseUID.kind}}</th>
         <th>GDEBODY</th>
         <th>{{item.CourseUID.credits}}</th>
